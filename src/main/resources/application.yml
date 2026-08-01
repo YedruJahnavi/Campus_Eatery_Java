@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/campus_eatery
+      uri: ${MONGO_URI:mongodb://localhost:27017/campus_eatery}
   security:
     oauth2:
       resourceserver:
