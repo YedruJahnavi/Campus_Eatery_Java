@@ -23,7 +23,12 @@ script.addEventListener("load", async function () {
     }
 
     if (window.Clerk.user) {
-        // User is signed in, mount user button
+        // User is signed in, mount user button in place of the login btn
+        const existingLoginBtn = document.getElementById('loginBtn');
+        if (existingLoginBtn) {
+            existingLoginBtn.style.display = 'none';
+        }
+        
         window.Clerk.mountUserButton(authContainer);
         
         // Update mock vendor if the user happens to be testing the vendor dashboard
@@ -31,12 +36,16 @@ script.addEventListener("load", async function () {
             localStorage.setItem('mockVendorId', window.Clerk.user.id);
         }
     } else {
-        // User is not signed in, mount sign in button
-        const signInBtn = document.createElement('button');
-        signInBtn.className = 'btn btn-primary';
-        signInBtn.innerText = 'Sign In';
-        signInBtn.onclick = () => window.Clerk.openSignIn();
-        authContainer.appendChild(signInBtn);
+        // Not signed in
+        const existingLoginBtn = document.getElementById('loginBtn');
+        if (existingLoginBtn) {
+            existingLoginBtn.onclick = () => window.Clerk.openSignIn();
+        }
+
+        // If they try to access the dashboard while not logged in, redirect them back to home
+        if (window.location.pathname.includes('dashboard.html')) {
+            window.location.replace('index.html');
+        }
     }
 });
 document.head.appendChild(script);
