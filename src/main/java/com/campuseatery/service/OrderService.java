@@ -20,6 +20,7 @@ public class OrderService {
     private final MenuItemRepository menuItemRepository;
     private final DeliveryAddressRepository addressRepository;
     private final StallRepository stallRepository;
+    private final org.springframework.messaging.simp.SimpMessagingTemplate simpMessagingTemplate;
 
     public List<OrderWithReviewDto> getStudentOrders(String studentId) {
         List<Order> orders = orderRepository.findByStudentId(studentId);
@@ -94,8 +95,10 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        // TODO: Emit to vendors via Spring WebSocket (SimpMessagingTemplate)
-        // simpMessagingTemplate.convertAndSend("/topic/vendors", savedOrder);
+        Stall stall = stallRepository.findById(stallId).orElse(null);
+        if (stall != null && stall.getVendorId() != null) {
+            simpMessagingTemplate.convertAndSend("/topic/orders/" + stall.getVendorId(), savedOrder);
+        }
 
         cart.setItems(new ArrayList<>());
         cart.setTotal(0.0);
@@ -133,9 +136,8 @@ public class OrderService {
         order.setStatus(status);
         Order updatedOrder = orderRepository.save(order);
 
-        // TODO: Emit via WebSocket to user and vendors
-        // simpMessagingTemplate.convertAndSend("/topic/user_" + order.getStudentId(), updatedOrder);
-        // simpMessagingTemplate.convertAndSend("/topic/vendors", updatedOrder);
+        simpMessagingTemplate.convertAndSend("/topic/user_" + order.getStudentId(), updatedOrder);
+        simpMessagingTemplate.convertAndSend("/topic/orders/" + vendorId, updatedOrder);
 
         return updatedOrder;
     }

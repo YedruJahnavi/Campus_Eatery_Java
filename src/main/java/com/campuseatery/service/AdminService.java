@@ -97,8 +97,27 @@ public class AdminService {
             stallRepository.save(stall);
         }
 
-        // TODO: Sync updated role and status to Clerk
-        // clerkClient.users.updateUserMetadata(user._id, { publicMetadata: { role: 'vendor', approval_status: 'approved', onboardingComplete: true } });
+        String clerkSecretKey = System.getenv("CLERK_SECRET_KEY");
+        if (clerkSecretKey != null && !clerkSecretKey.isEmpty()) {
+            try {
+                org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+                org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+                headers.set("Authorization", "Bearer " + clerkSecretKey);
+                headers.set("Content-Type", "application/json");
+
+                String payload = "{ \"public_metadata\": { \"role\": \"vendor\", \"approval_status\": \"approved\" } }";
+                org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(payload, headers);
+                
+                restTemplate.exchange(
+                    "https://api.clerk.com/v1/users/" + id + "/metadata", 
+                    org.springframework.http.HttpMethod.PATCH, 
+                    entity, 
+                    String.class
+                );
+            } catch (Exception e) {
+                System.err.println("Failed to update Clerk metadata: " + e.getMessage());
+            }
+        }
     }
 
     @Transactional

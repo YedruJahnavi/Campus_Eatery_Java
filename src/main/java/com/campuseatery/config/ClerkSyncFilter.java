@@ -60,7 +60,14 @@ public class ClerkSyncFilter extends OncePerRequestFilter {
                     }
                     
                     user.setEmail(email);
-                    user.setRole("customer");
+                    
+                    String role = "customer";
+                    Map<String, Object> metadata = jwt.getClaimAsMap("publicMetadata");
+                    if (metadata != null && metadata.containsKey("role")) {
+                        role = (String) metadata.get("role");
+                    }
+                    user.setRole(role);
+                    
                     userRepository.save(user);
                 }
                 syncedUsers.put(clerkId, true);
