@@ -1,0 +1,142 @@
+package com.campuseatery.service;
+
+import com.campuseatery.dto.OrderWithReviewDto;
+import com.campuseatery.model.*;
+import com.campuseatery.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final CartRepository cartRepository;
+    private final ReviewRepository reviewRepository;
+    private final MenuItemRepository menuItemRepository;
+    private final DeliveryAddressRepository addressRepository;
+    private final StallRepository stallRepository;
+
+    public List<OrderWithReviewDto> getStudentOrders(String studentId) {
+        List<Order> orders = orderRepository.findByStudentId(studentId);
+        // Sort descending by created_at
+        orders.sort((o1, o2) -> {
+            if (o1.getCreatedAt() == null || o2.getCreatedAt() == null) return 0;
+            return o2.getCreatedAt().compareTo(o1.getCreatedAt());
+        });
+
+        List<String> orderIds = orders.stream().map(Order::getId).collect(Collectors.toList());
+        
+        Set<String> reviewedOrderIds = new HashSet<>();
+        if (!orderIds.isEmpty()) {
+            List<Review> reviews = reviewRepository.findByOrderIdIn(orderIds);
+            for (Review r : reviews) {
+                reviewedOrderIds.add(r.getOrderId());
+            }
+        }
+
+        return orders.stream()
+                .map(order -> new OrderWithReviewDto(order, reviewedOrderIds.contains(order.getId())))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public String checkout(String studentId) {
+        Cart cart = cartRepository.findByUserId(studentId).orElse(null);
+        if (cart == null || cart.getItems() == null || cart.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Cart is empty");
+        }
+
+        // Get stall_id from first item
+        Cart.CartItem firstItem = cart.getItems().get(0);
+        MenuItem menuItem = menuItemRepository.findById(firstItem.getMenuItemId()).orElse(null);
+        if (menuItem == null || menuItem.getStallId() == null) {
+            throw new IllegalArgumentException("Menu item no longer exists or stall is unavailable");
+        }
+        String stallId = menuItem.getStallId();
+
+        List<DeliveryAddress> addresses = addressRepository.findByUserId(studentId);
+        if (addresses.isEmpty()) {
+            throw new IllegalArgumentException("Please provide a delivery address before checkout.");
+        }
+        DeliveryAddress address = addresses.get(0);
+
+        Double foodTotal = cart.getTotal();
+        Double gst = Math.floor(foodTotal * 0.05);
+        Double grandTotal = foodTotal + gst;
+
+        List<Order.OrderItem> orderItems = cart.getItems().stream().map(item -> {
+            Order.OrderItem oi = new Order.OrderItem();
+            oi.setMenuItemId(item.getMenuItemId());
+            oi.setName(item.getName());
+            oi.setQuantity(item.getQuantity());
+            oi.setUnitPricePaise(item.getPrice());
+            return oi;
+        }).collect(Collectors.toList());
+
+        Order order = new Order();
+        order.setStudentId(studentId);
+        order.setStallId(stallId);
+        order.setItems(orderItems);
+        order.setFoodTotal(foodTotal);
+        order.setDeliveryFee(0.0);
+        order.setPlatformFee(0.0);
+        order.setGst(gst);
+        order.setGrandTotal(grandTotal);
+        order.setStatus("placed");
+        order.setIdempotencyKey(UUID.randomUUID().toString());
+        order.setDeliveryCode(String.valueOf((int)(Math.random() * 9000) + 1000));
+        order.setDeliveryAddressId(address.getId());
+
+        Order savedOrder = orderRepository.save(order);
+
+        // TODO: Emit to vendors via Spring WebSocket (SimpMessagingTemplate)
+        // simpMessagingTemplate.convertAndSend("/topic/vendors", savedOrder);
+
+        cart.setItems(new ArrayList<>());
+        cart.setTotal(0.0);
+        cartRepository.save(cart);
+
+        return savedOrder.getId();
+    }
+
+    public List<Order> getVendorOrders(String vendorId) {
+        Stall stall = stallRepository.findByVendorId(vendorId);
+        if (stall == null) {
+            throw new SecurityException("Forbidden: Not a vendor or no stall found");
+        }
+
+        List<Order> orders = orderRepository.findByStallId(stall.getId());
+        orders.sort((o1, o2) -> {
+            if (o1.getCreatedAt() == null || o2.getCreatedAt() == null) return 0;
+            return o2.getCreatedAt().compareTo(o1.getCreatedAt());
+        });
+        return orders;
+    }
+
+    public Order updateOrderStatus(String vendorId, String orderId, String status) {
+        Stall stall = stallRepository.findByVendorId(vendorId);
+        if (stall == null) {
+            throw new SecurityException("Forbidden: Not a vendor");
+        }
+
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        
+        if (!order.getStallId().equals(stall.getId())) {
+            throw new SecurityException("Forbidden: Order does not belong to your stall");
+        }
+
+        order.setStatus(status);
+        Order updatedOrder = orderRepository.save(order);
+
+        // TODO: Emit via WebSocket to user and vendors
+        // simpMessagingTemplate.convertAndSend("/topic/user_" + order.getStudentId(), updatedOrder);
+        // simpMessagingTemplate.convertAndSend("/topic/vendors", updatedOrder);
+
+        return updatedOrder;
+    }
+}

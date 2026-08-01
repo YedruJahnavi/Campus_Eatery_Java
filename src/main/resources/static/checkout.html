@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Campus Eatery</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <nav class="navbar">
+            <a href="index.html" class="nav-brand text-gradient">Campus Eatery</a>
+        </nav>
+
+        <main class="main-content" style="max-width: 800px; margin: 0 auto; padding-top: 4rem;">
+            <h1 class="text-gradient" style="font-size: 2.5rem; margin-bottom: 2rem; text-align: center;">Complete Your Order</h1>
+            
+            <div id="checkoutSuccess" style="display: none; text-align: center;" class="glass-panel">
+                <ion-icon name="checkmark-circle-outline" style="font-size: 5rem; color: var(--success); margin: 2rem 0 1rem;"></ion-icon>
+                <h2 style="margin-bottom: 1rem;">Order Placed Successfully!</h2>
+                <p class="text-secondary" style="margin-bottom: 2rem;">Your order ID is <strong id="successOrderId"></strong>. A rider will bring it shortly.</p>
+                <a href="index.html" class="btn btn-primary" style="margin-bottom: 2rem;">Back to Home</a>
+            </div>
+
+            <div id="checkoutFormContainer" class="glass-panel" style="padding: 2rem;">
+                <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem;">1. Delivery Address</h3>
+                
+                <form id="addressForm">
+                    <div class="form-group">
+                        <label class="form-label">Hostel / Building Name</label>
+                        <input type="text" id="addressLine1" class="form-control" placeholder="e.g. Boys Hostel A" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Room No / specific details</label>
+                        <input type="text" id="addressLine2" class="form-control" placeholder="e.g. Room 204">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">City/Campus Area</label>
+                            <input type="text" id="city" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pincode</label>
+                            <input type="text" id="pincode" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem;">2. Order Summary</h3>
+                    
+                    <div id="checkoutSummary" style="margin-bottom: 2rem;">
+                        <p class="text-secondary text-center">Loading cart...</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;" id="placeOrderBtn">
+                        <ion-icon name="card-outline"></ion-icon> Place Order
+                    </button>
+                    <p id="checkoutError" class="text-error text-center" style="margin-top: 1rem; display: none;"></p>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/checkout.js"></script>
+</body>
+</html>

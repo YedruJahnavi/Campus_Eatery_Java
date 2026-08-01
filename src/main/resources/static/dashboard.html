@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard | Campus Eatery</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <nav class="navbar">
+            <a href="index.html" class="nav-brand text-gradient">Campus Eatery</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Storefront</a>
+                <span class="text-secondary">Vendor Mode</span>
+            </div>
+        </nav>
+
+        <main class="main-content" style="max-width: 1000px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2>Your Menu Items</h2>
+                <button class="btn btn-primary" id="addBtn"><ion-icon name="add-outline"></ion-icon> Add New Item</button>
+            </div>
+
+            <div class="glass-panel" style="padding: 1rem;">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Available</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendorMenuBody">
+                            <tr><td colspan="5" class="text-center text-secondary">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Menu Item</h3>
+                <button class="close-btn" id="closeModalBtn"><ion-icon name="close-outline"></ion-icon></button>
+            </div>
+            <form id="itemForm">
+                <input type="hidden" id="itemId">
+                
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" id="itemName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="itemDesc" class="form-control" rows="3" required></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Price (in Paise)</label>
+                        <input type="number" id="itemPrice" class="form-control" min="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <input type="text" id="itemCategory" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+                    <input type="checkbox" id="itemAvailable" checked style="width: 18px; height: 18px;">
+                    <label for="itemAvailable" class="form-label" style="margin: 0;">Currently Available</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Save Item</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Details | Campus Eatery</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <a href="index.html" class="nav-brand text-gradient">Campus Eatery</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link"><ion-icon name="restaurant-outline"></ion-icon> Vendors</a>
+                <a href="#" class="nav-link" id="cartToggleBtn"><ion-icon name="cart-outline"></ion-icon> Cart</a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="appRoot">
+            <div id="vendorHeader" class="glass-panel" style="padding: 2rem; margin-bottom: 2rem;">
+                <h1 id="vendorName" class="text-gradient">Loading...</h1>
+                <p id="vendorDesc" class="text-secondary" style="margin-top: 0.5rem;"></p>
+                <div style="margin-top: 1rem; display: flex; gap: 1rem; color: var(--text-muted);">
+                    <span id="vendorLocation"><ion-icon name="location-outline"></ion-icon> </span>
+                    <span id="vendorRating" style="color: var(--warning);"><ion-icon name="star"></ion-icon> </span>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem;">Menu Items</h2>
+            
+            <div class="menu-grid" id="menuList">
+                <p class="text-secondary">Loading menu...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2>Your Order</h2>
+            <button class="close-btn" id="closeCartBtn"><ion-icon name="close-outline"></ion-icon></button>
+        </div>
+        <div class="cart-items" id="cartItemsContainer"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotalValue">₹0.00</span>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" id="checkoutBtn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/vendor.js"></script>
+</body>
+</html>

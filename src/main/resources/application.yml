@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/campus_eatery
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://primary-mammal-33.clerk.accounts.dev
+
+server:
+  port: 8080
