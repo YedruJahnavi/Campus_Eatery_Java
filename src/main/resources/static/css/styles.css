@@ -480,3 +480,28 @@ th {
     font-weight: 500;
     font-size: 0.9rem;
 }
+
+/* Responsive adjustments for the new hero section */
+@media (max-width: 900px) {
+    .hero-section {
+        flex-direction: column;
+        text-align: center !important;
+        padding: 4rem 2rem !important;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem !important;
+    }
+    
+    .hero-subtitle {
+        margin: 0 auto 2.5rem auto !important;
+    }
+    
+    .hero-section > div:first-child {
+        margin-bottom: 3rem;
+    }
+
+    #how-it-works > div:last-child {
+        grid-template-columns: 1fr !important;
+    }
+}
