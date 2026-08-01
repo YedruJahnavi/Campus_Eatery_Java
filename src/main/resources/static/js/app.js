@@ -15,9 +15,56 @@ async function initApp() {
 
     // Attach Event Listeners
     document.getElementById('exploreBtn').addEventListener('click', loadVendors);
+    
+    // Check User Identity
+    try {
+        const user = await window.api.getMe();
+        
+        // Vendor Redirection Logic
+        if (user.role === 'vendor' && user.approvalStatus === 'approved') {
+            window.location.replace('dashboard.html');
+            return;
+        }
+
+        // Show banner and hide button if pending
+        const vendorBtn = document.getElementById('dynamicVendorBtn');
+        const banner = document.getElementById('vendorStatusBanner');
+        
+        if (user.approvalStatus === 'pending_approval') {
+            if(banner) banner.style.display = 'block';
+            if(vendorBtn) vendorBtn.style.display = 'none';
+        } else {
+            // They are a normal customer, allow them to apply
+            if(vendorBtn) {
+                vendorBtn.style.display = 'inline-block';
+                vendorBtn.addEventListener('click', applyToBeVendor);
+            }
+        }
+    } catch (e) {
+        console.warn('Could not fetch user profile (might not be logged in yet).');
+    }
 
     // Initial load
     await loadVendors();
+}
+
+async function applyToBeVendor() {
+    const stallName = prompt("What is the name of your stall?");
+    if (!stallName) return;
+    const whatTheySell = prompt("What do you sell?");
+    
+    try {
+        await window.api.applyForVendor({
+            stallName,
+            whatTheySell,
+            mobileNumber: "1234567890", // placeholder for simplicity
+            collegeLocation: "Main Campus"
+        });
+        alert("Application submitted! We will review it shortly.");
+        window.location.reload();
+    } catch (e) {
+        alert("Failed to submit application.");
+    }
 }
 
 async function loadVendors() {

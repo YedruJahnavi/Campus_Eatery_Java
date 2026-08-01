@@ -28,9 +28,14 @@
                 <p class="hero-subtitle">Skip the lines. Order from your favorite campus stalls and enjoy seamless delivery right to your hostel or classroom.</p>
                 <div style="display: flex; gap: 1rem; justify-content: center;">
                     <button class="btn btn-primary" id="exploreBtn">Explore Menu</button>
-                    <button class="btn btn-glass" id="vendorBtn" onclick="window.location.href='dashboard.html'">Vendor Dashboard</button>
+                    <button class="btn btn-glass" id="dynamicVendorBtn" style="display: none;">Become a Vendor</button>
                 </div>
             </section>
+
+            <!-- Vendor Status Banner -->
+            <div id="vendorStatusBanner" style="display: none; background: rgba(255,165,0,0.2); border: 1px solid orange; color: orange; padding: 1rem; text-align: center; border-radius: 8px; margin: 1rem auto; max-width: 800px;">
+                ⏳ Your vendor application is under review. We'll notify you when approved.
+            </div>
 
             <!-- Dynamic content will be injected here by app.js -->
             <section id="dynamicContent">

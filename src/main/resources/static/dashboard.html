@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/styles.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
     <div class="app-container">
@@ -19,6 +21,18 @@
         </nav>
 
         <main class="main-content" style="max-width: 1000px;">
+            <!-- Live Orders Section -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; margin-top: 1rem;">
+                <h2 style="color: var(--warning); display: flex; align-items: center; gap: 0.5rem;"><ion-icon name="notifications-outline"></ion-icon> Live Orders <span id="wsStatus" style="font-size:0.8rem; color:gray">(Connecting...)</span></h2>
+            </div>
+            
+            <div id="liveOrdersContainer" class="vendor-grid" style="margin-bottom: 3rem;">
+                <p class="text-secondary" style="grid-column: 1/-1;">No active orders yet.</p>
+            </div>
+
+            <hr style="border:0; border-top: 1px solid var(--border-glass); margin-bottom: 2rem;">
+
+            <!-- Menu Section -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
                 <h2>Your Menu Items</h2>
                 <button class="btn btn-primary" id="addBtn"><ion-icon name="add-outline"></ion-icon> Add New Item</button>

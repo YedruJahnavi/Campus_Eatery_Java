@@ -94,6 +94,25 @@ const api = {
             throw new Error(errData.detail || 'Checkout failed');
         }
         return res.json();
+    },
+
+    // Users & Identity
+    getMe: async () => {
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${API_BASE_URL}/users/me`, { headers });
+        if (!res.ok) throw new Error('Failed to fetch user profile');
+        return res.json();
+    },
+
+    applyForVendor: async (vendorData) => {
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${API_BASE_URL}/users/vendor-request`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(vendorData)
+        });
+        if (!res.ok) throw new Error('Failed to submit vendor application');
+        return res.json();
     }
 };
 

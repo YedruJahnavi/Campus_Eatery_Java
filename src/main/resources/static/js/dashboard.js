@@ -25,14 +25,72 @@ const elements = {
     itemAvailable: document.getElementById('itemAvailable')
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Set a mock vendor if not exists
-    if (!localStorage.getItem('mockVendorId')) {
-        localStorage.setItem('mockVendorId', VENDOR_ID);
+let stompClient = null;
+let currentVendorId = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    // Authenticate and get vendor ID
+    try {
+        const user = await window.api.getMe();
+        if (user.role !== 'vendor') {
+            alert('Access Denied. You must be an approved vendor to view this page.');
+            window.location.replace('index.html');
+            return;
+        }
+        currentVendorId = user.id;
+        initDashboard();
+        connectWebSocket();
+    } catch (e) {
+        window.location.replace('index.html');
+    }
+});
+
+function connectWebSocket() {
+    const wsStatus = document.getElementById('wsStatus');
+    const socket = new SockJS('/ws');
+    stompClient = Stomp.over(socket);
+    stompClient.debug = null; // Disable spammy logs
+    
+    stompClient.connect({}, function (frame) {
+        wsStatus.innerText = '(Connected Live)';
+        wsStatus.style.color = 'var(--success)';
+        
+        stompClient.subscribe('/topic/orders/' + currentVendorId, function (message) {
+            const orderData = JSON.parse(message.body);
+            displayNewOrder(orderData);
+        });
+    }, function(error) {
+        wsStatus.innerText = '(Disconnected - Retrying...)';
+        wsStatus.style.color = 'var(--error)';
+        setTimeout(connectWebSocket, 5000);
+    });
+}
+
+function displayNewOrder(order) {
+    const container = document.getElementById('liveOrdersContainer');
+    
+    // Remove the "No active orders" message if it exists
+    if (container.querySelector('p.text-secondary')) {
+        container.innerHTML = '';
     }
     
-    initDashboard();
-});
+    const card = document.createElement('div');
+    card.className = 'glass-panel';
+    card.style.padding = '1rem';
+    card.style.borderLeft = '4px solid var(--warning)';
+    card.style.animation = 'pulse 2s infinite';
+    
+    setTimeout(() => { card.style.animation = 'none'; }, 10000);
+    
+    card.innerHTML = `
+        <h3 style="margin-bottom: 0.5rem;">New Order #${order.id.substring(0,6)}</h3>
+        <p class="text-secondary" style="font-size: 0.9rem; margin-bottom: 0.5rem;">Status: <strong style="color:var(--warning)">${order.status}</strong></p>
+        <p style="font-weight: 600; margin-bottom: 1rem;">Total: ₹${(order.totalPricePaise / 100).toFixed(2)}</p>
+        <button class="btn btn-primary" style="width:100%; padding: 0.5rem;" onclick="alert('Order Accepted!')">Accept Order</button>
+    `;
+    
+    container.prepend(card);
+}
 
 function initDashboard() {
     loadMenuItems();
