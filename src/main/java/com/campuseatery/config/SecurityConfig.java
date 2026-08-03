@@ -53,7 +53,7 @@ public class SecurityConfig {
                 // API endpoints require authentication
                 .requestMatchers("/api/**").authenticated()
                 // Frontend static files
-                .requestMatchers("/", "/index.html", "/dashboard.html", "/vendor.html", "/checkout.html", "/css/**", "/js/**", "/assets/**", "/favicon.ico", "/*.html", "/*.css", "/*.js").permitAll()
+                .requestMatchers("/", "/index.html", "/dashboard.html", "/admin.html", "/vendor.html", "/checkout.html", "/css/**", "/js/**", "/assets/**", "/favicon.ico", "/*.html", "/*.css", "/*.js").permitAll()
                 .anyRequest().permitAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
