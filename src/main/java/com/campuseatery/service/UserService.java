@@ -70,6 +70,16 @@ public class UserService {
             user.setEmail(userId.contains("@") ? userId : userId + "@campus.edu");
             return userRepository.save(user);
         });
+    public User updateProfile(String userId, com.campuseatery.dto.UserProfileDto dto) {
+        User user = getMe(userId);
+        if (dto.getName() != null) user.setName(dto.getName());
+        if (dto.getMobileNumber() != null) user.setMobileNumber(dto.getMobileNumber());
+        if (dto.getCollegeName() != null) user.setCollegeName(dto.getCollegeName());
+        if (dto.getCollegeLocation() != null) user.setCollegeLocation(dto.getCollegeLocation());
+        if (dto.getStudyBranch() != null) user.setStudyBranch(dto.getStudyBranch());
+        if (dto.getYearOfStudy() != null) user.setYearOfStudy(dto.getYearOfStudy());
+        if (dto.getRegistrationNumber() != null) user.setRegistrationNumber(dto.getRegistrationNumber());
+        return userRepository.save(user);
     }
 
     public void processVendorRequest(String clerkId, VendorRequestDto dto) {

@@ -104,6 +104,17 @@ const api = {
         return res.json();
     },
 
+    updateProfile: async (profileData) => {
+        const headers = await getAuthHeaders();
+        const res = await fetch(`${API_BASE_URL}/users/profile`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(profileData)
+        });
+        if (!res.ok) throw new Error('Failed to update profile');
+        return res.json();
+    },
+
     applyForVendor: async (vendorData) => {
         const headers = await getAuthHeaders();
         const res = await fetch(`${API_BASE_URL}/users/vendor-request`, {
