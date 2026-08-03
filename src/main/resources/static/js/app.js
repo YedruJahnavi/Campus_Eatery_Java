@@ -51,7 +51,61 @@ async function initApp() {
     // Attach Event Listeners
     const exploreBtn = document.getElementById('exploreBtn');
     if (exploreBtn) exploreBtn.addEventListener('click', loadVendors);
-    
+
+    // Modal listeners
+    const modal = document.getElementById('vendorRequestModal');
+    const overlay = document.getElementById('vendorModalOverlay');
+    const closeBtn = document.getElementById('closeVendorModalBtn');
+    const form = document.getElementById('vendorApplicationForm');
+
+    const closeModal = () => {
+        if (modal) modal.style.display = 'none';
+        if (overlay) overlay.style.display = 'none';
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (overlay) overlay.addEventListener('click', closeModal);
+
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const stallName = document.getElementById('reqStallName').value.trim();
+            const fssaiLicense = document.getElementById('reqFssaiLicense').value.trim();
+            const collegeLocation = document.getElementById('reqCollegeLocation').value.trim();
+            const whatTheySell = document.getElementById('reqWhatTheySell').value.trim();
+            const mobileNumber = document.getElementById('reqMobileNumber').value.trim();
+            const errDiv = document.getElementById('vendorModalError');
+
+            if (errDiv) errDiv.style.display = 'none';
+
+            if (!/^\d{14}$/.test(fssaiLicense)) {
+                if (errDiv) {
+                    errDiv.innerText = "FSSAI License Code must be exactly 14 digits.";
+                    errDiv.style.display = 'block';
+                }
+                return;
+            }
+
+            try {
+                await window.api.applyForVendor({
+                    stallName,
+                    fssaiLicense,
+                    collegeLocation,
+                    whatTheySell,
+                    mobileNumber
+                });
+                closeModal();
+                alert("Vendor application submitted successfully! Your request is now pending admin approval.");
+                window.location.reload();
+            } catch (e) {
+                if (errDiv) {
+                    errDiv.innerText = e.message || "Failed to submit vendor application.";
+                    errDiv.style.display = 'block';
+                }
+            }
+        });
+    }
+
     // Check User Identity
     try {
         const user = await window.api.getMe();
@@ -73,34 +127,27 @@ async function initApp() {
             // They are a normal customer, allow them to apply
             if(vendorBtn) {
                 vendorBtn.style.display = 'inline-block';
-                vendorBtn.addEventListener('click', applyToBeVendor);
+                vendorBtn.addEventListener('click', openVendorModal);
             }
         }
     } catch (e) {
         console.warn('Could not fetch user profile (might not be logged in yet).');
+        const vendorBtn = document.getElementById('dynamicVendorBtn');
+        if(vendorBtn) {
+            vendorBtn.style.display = 'inline-block';
+            vendorBtn.addEventListener('click', openVendorModal);
+        }
     }
 
     // Initial load
     await loadVendors();
 }
 
-async function applyToBeVendor() {
-    const stallName = prompt("What is the name of your stall?");
-    if (!stallName) return;
-    const whatTheySell = prompt("What do you sell?");
-    
-    try {
-        await window.api.applyForVendor({
-            stallName,
-            whatTheySell,
-            mobileNumber: "1234567890",
-            collegeLocation: "Main Campus"
-        });
-        alert("Application submitted! We will review it shortly.");
-        window.location.reload();
-    } catch (e) {
-        alert("Failed to submit application.");
-    }
+function openVendorModal() {
+    const modal = document.getElementById('vendorRequestModal');
+    const overlay = document.getElementById('vendorModalOverlay');
+    if (modal) modal.style.display = 'block';
+    if (overlay) overlay.style.display = 'block';
 }
 
 async function loadVendors() {

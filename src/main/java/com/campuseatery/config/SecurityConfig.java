@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final ClerkSyncFilter clerkSyncFilter;
+    private final AdminLocalhostFilter adminLocalhostFilter;
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
@@ -47,6 +48,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints
+                .requestMatchers("/api/admin/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/vendors/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
@@ -57,6 +59,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+            .addFilterBefore(adminLocalhostFilter, org.springframework.security.web.header.HeaderWriterFilter.class)
             .addFilterAfter(clerkSyncFilter, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.class);
         return http.build();
     }

@@ -1,5 +1,6 @@
 package com.campuseatery.controller;
 
+import com.campuseatery.dto.AdminLoginDto;
 import com.campuseatery.dto.UserStatusUpdateDto;
 import com.campuseatery.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,20 @@ public class AdminController {
     // A helper method to simulate the requireAdmin middleware
     private void requireAdmin(String adminId) {
         adminService.verifyAdmin(adminId);
+    }
+
+    @PostMapping("/login")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> login(@RequestBody AdminLoginDto dto) {
+        if (adminService.authenticateAdmin(dto.getUsername(), dto.getPassword())) {
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "token", "admin_session_token",
+                "adminId", "admin_demo_1"
+            ));
+        } else {
+            return ResponseEntity.status(401).body(Map.of("detail", "Invalid admin credentials"));
+        }
     }
 
     @GetMapping("/stats")

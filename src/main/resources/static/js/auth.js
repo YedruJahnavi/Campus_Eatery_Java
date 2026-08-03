@@ -87,28 +87,33 @@ async function checkUserRoleAndRedirect(user, isPostLoginEvent = false) {
         role = 'vendor';
     }
 
-    // Inject portal buttons dynamically into Navbar
-    const navLinks = document.querySelector('.nav-links');
-    if (navLinks) {
-        if (role === 'admin' && !document.getElementById('navAdminLink')) {
-            const adminLink = document.createElement('a');
-            adminLink.id = 'navAdminLink';
-            adminLink.href = 'admin.html';
-            adminLink.className = 'nav-link';
-            adminLink.style.color = '#f87171';
-            adminLink.style.fontWeight = 'bold';
-            adminLink.innerHTML = '<ion-icon name="shield-checkmark-outline"></ion-icon> Admin Panel';
-            navLinks.insertBefore(adminLink, navLinks.firstChild);
-        } else if (role === 'vendor' && !document.getElementById('navVendorLink')) {
-            const vendorLink = document.createElement('a');
-            vendorLink.id = 'navVendorLink';
-            vendorLink.href = 'dashboard.html';
-            vendorLink.className = 'nav-link';
-            vendorLink.style.color = '#818cf8';
-            vendorLink.style.fontWeight = 'bold';
-            vendorLink.innerHTML = '<ion-icon name="restaurant-outline"></ion-icon> Vendor Dashboard';
-            navLinks.insertBefore(vendorLink, navLinks.firstChild);
-        }
+    // Inject Become a Vendor link if customer hasn't applied yet
+    if (navLinks && role !== 'vendor' && role !== 'admin' && approvalStatus !== 'pending_approval' && !document.getElementById('navBecomeVendorLink')) {
+        const becomeVendorLink = document.createElement('a');
+        becomeVendorLink.id = 'navBecomeVendorLink';
+        becomeVendorLink.href = '#';
+        becomeVendorLink.className = 'nav-link';
+        becomeVendorLink.style.color = '#818cf8';
+        becomeVendorLink.style.fontWeight = 'bold';
+        becomeVendorLink.innerHTML = '<ion-icon name="storefront-outline"></ion-icon> Become a Vendor';
+        becomeVendorLink.onclick = (e) => {
+            e.preventDefault();
+            if (typeof openVendorModal === 'function') openVendorModal();
+        };
+        navLinks.insertBefore(becomeVendorLink, navLinks.firstChild);
+    }
+
+    // Always inject Admin Panel link when running on localhost or for authenticated users
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (navLinks && (isLocalhost || role === 'admin') && !document.getElementById('navAdminLink')) {
+        const adminLink = document.createElement('a');
+        adminLink.id = 'navAdminLink';
+        adminLink.href = 'admin.html';
+        adminLink.className = 'nav-link';
+        adminLink.style.color = '#f87171';
+        adminLink.style.fontWeight = 'bold';
+        adminLink.innerHTML = '<ion-icon name="shield-checkmark-outline"></ion-icon> Admin Panel';
+        navLinks.insertBefore(adminLink, navLinks.firstChild);
     }
 
     // Handle redirects

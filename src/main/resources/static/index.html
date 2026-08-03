@@ -126,6 +126,46 @@
         </div>
     </div>
     
+    <!-- Vendor Request Modal -->
+    <div class="sidebar-overlay" id="vendorModalOverlay" style="display: none; z-index: 1000;"></div>
+    <div id="vendorRequestModal" style="display: none; fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); position: fixed; width: 90%; max-width: 520px; z-index: 1001; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 2.5rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="font-size: 1.6rem; margin-bottom: 0.25rem;">Vendor Registration Application</h2>
+                <p class="text-secondary" style="font-size: 0.85rem;">Submit your stall credentials for campus administrator verification.</p>
+            </div>
+            <button id="closeVendorModalBtn" class="close-btn" style="background: none; border: none; color: #a1a1aa; font-size: 1.8rem; cursor: pointer;">
+                <ion-icon name="close-outline"></ion-icon>
+            </button>
+        </div>
+        <form id="vendorApplicationForm" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">1. Stall / Business Name</label>
+                <input type="text" id="reqStallName" required placeholder="e.g. Campus Brews & Bites" class="form-control" style="width: 100%; padding: 0.65rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">2. FSSAI License Code (14 Digits)</label>
+                <input type="text" id="reqFssaiLicense" required pattern="\d{14}" placeholder="e.g. 12345678901234" class="form-control" style="width: 100%; padding: 0.65rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">3. College / University Location</label>
+                <input type="text" id="reqCollegeLocation" required placeholder="e.g. South Block Canteen / SAC Block" class="form-control" style="width: 100%; padding: 0.65rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">4. What You Sell (Menu Summary)</label>
+                <textarea id="reqWhatTheySell" required rows="2" placeholder="e.g. South Indian breakfast, coffee, snacks" class="form-control" style="width: 100%; padding: 0.65rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; font-family: inherit;"></textarea>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">5. Mobile Phone Number</label>
+                <input type="tel" id="reqMobileNumber" required placeholder="e.g. 9876543210" class="form-control" style="width: 100%; padding: 0.65rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+            </div>
+            <div id="vendorModalError" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;"></div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-weight: 600; margin-top: 0.5rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; border-radius: 8px; cursor: pointer;">
+                Submit Vendor Application
+            </button>
+        </form>
+    </div>
+
     <script src="js/auth.js"></script>
     <script src="js/api.js"></script>
     <script src="js/cart.js"></script>

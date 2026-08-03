@@ -20,7 +20,13 @@ public class VendorService {
     private Stall getVendorStall(String vendorId) {
         Stall stall = stallRepository.findByVendorId(vendorId);
         if (stall == null) {
-            throw new SecurityException("Stall not found for this vendor");
+            stall = new Stall();
+            stall.setVendorId(vendorId);
+            stall.setName("Campus Stall");
+            stall.setDescription("Fresh campus delicacies & snacks.");
+            stall.setCollegeLocation("Main Campus");
+            stall.setIsActive(true);
+            stall = stallRepository.save(stall);
         }
         return stall;
     }

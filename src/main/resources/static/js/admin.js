@@ -5,30 +5,149 @@ document.addEventListener('DOMContentLoaded', async () => {
     initAdminPage();
 });
 
-async function initAdminPage() {
-    try {
-        const user = await window.api.getMe();
-        if (user.role !== 'admin' && !user.id.includes('admin')) {
-            // For testing/demo mode, if they navigate to admin.html, allow them to view demo admin
-            console.warn('User role is not explicitly admin, but allowing admin view for testing.');
-        }
-    } catch (e) {
-        console.warn('Could not verify user role via getMe, proceeding with admin panel.');
+function getAdminAuthHeaders() {
+    const token = sessionStorage.getItem('adminAuthToken') || (window.Clerk && window.Clerk.user ? window.Clerk.user.id : 'admin_demo_1');
+    const headers = {
+        'Content-Type': 'application/json',
+        'X-User-Id': token
+    };
+
+    if (window.Clerk && window.Clerk.session) {
+        window.Clerk.session.getToken().then(t => {
+            if (t) headers['Authorization'] = `Bearer ${t}`;
+        }).catch(() => {});
     }
+
+    return headers;
+}
+
+async function initAdminPage() {
+    const loginForm = document.getElementById('adminLoginForm');
+    const loginError = document.getElementById('adminLoginError');
+    const logoutBtn = document.getElementById('adminLogoutBtn');
+    const resetBtn = document.getElementById('resetDemoBtn');
+    const clerkAuthSection = document.getElementById('clerkAdminAuthSection');
+    const clerkEmailDisplay = document.getElementById('clerkUserEmailDisplay');
+    const clerkAdminLoginBtn = document.getElementById('clerkAdminLoginBtn');
+
+    // Check if Clerk user is logged in
+    const checkClerkUser = async () => {
+        if (window.Clerk && window.Clerk.user) {
+            const email = window.Clerk.user.primaryEmailAddress ? window.Clerk.user.primaryEmailAddress.emailAddress : window.Clerk.user.id;
+            if (clerkEmailDisplay) clerkEmailDisplay.innerText = email;
+            if (clerkAuthSection) clerkAuthSection.style.display = 'block';
+
+            // Automatically authorize Clerk logged in student/user on localhost
+            sessionStorage.setItem('adminAuthToken', window.Clerk.user.id);
+            showDashboard();
+            return true;
+        }
+        return false;
+    };
+
+    // If Clerk script is loading asynchronously
+    if (window.Clerk) {
+        if (await checkClerkUser()) return;
+    } else {
+        window.addEventListener('load', async () => {
+            if (window.Clerk) {
+                window.Clerk.addListener(async () => {
+                    await checkClerkUser();
+                });
+            }
+        });
+    }
+
+    if (clerkAdminLoginBtn) {
+        clerkAdminLoginBtn.addEventListener('click', () => {
+            if (window.Clerk && window.Clerk.user) {
+                sessionStorage.setItem('adminAuthToken', window.Clerk.user.id);
+                showDashboard();
+            } else {
+                if (window.Clerk) window.Clerk.openSignIn();
+            }
+        });
+    }
+
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+
+            if (loginError) loginError.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    sessionStorage.setItem('adminAuthToken', data.adminId || 'admin_demo_1');
+                    showDashboard();
+                } else if (res.status === 403) {
+                    if (loginError) {
+                        loginError.innerText = 'Access Denied: Admin portal is restricted to localhost access only.';
+                        loginError.style.display = 'block';
+                    }
+                } else {
+                    if (loginError) {
+                        loginError.innerText = 'Invalid admin username or password.';
+                        loginError.style.display = 'block';
+                    }
+                }
+            } catch (err) {
+                if (loginError) {
+                    loginError.innerText = 'Connection error or localhost restriction failure.';
+                    loginError.style.display = 'block';
+                }
+            }
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('adminAuthToken');
+            showLoginForm();
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', clearDemoData);
+    }
+
+    // Check if session token exists
+    if (sessionStorage.getItem('adminAuthToken')) {
+        showDashboard();
+    } else {
+        showLoginForm();
+    }
+}
+
+function showLoginForm() {
+    const loginContainer = document.getElementById('adminLoginContainer');
+    const dashboardContent = document.getElementById('adminDashboardContent');
+    if (loginContainer) loginContainer.style.display = 'flex';
+    if (dashboardContent) dashboardContent.style.display = 'none';
+}
+
+function showDashboard() {
+    const loginContainer = document.getElementById('adminLoginContainer');
+    const dashboardContent = document.getElementById('adminDashboardContent');
+    if (loginContainer) loginContainer.style.display = 'none';
+    if (dashboardContent) dashboardContent.style.display = 'block';
 
     loadStats();
     loadVendorRequests();
     loadUsers();
-
-    const resetBtn = document.getElementById('resetDemoBtn');
-    if (resetBtn) {
-        resetBtn.addEventListener('click', clearDemoData);
-    }
 }
 
 async function loadStats() {
     try {
-        const headers = await window.api.getAuthHeaders();
+        const headers = getAdminAuthHeaders();
         const res = await fetch('/api/admin/stats', { headers });
         if (res.ok) {
             const stats = await res.json();
@@ -57,7 +176,7 @@ async function loadVendorRequests() {
     if (!container) return;
 
     try {
-        const headers = await window.api.getAuthHeaders();
+        const headers = getAdminAuthHeaders();
         const res = await fetch('/api/admin/vendor-requests', { headers });
         if (res.ok) {
             const requests = await res.json();
@@ -90,7 +209,7 @@ async function loadVendorRequests() {
 
 async function approveVendor(userId) {
     try {
-        const headers = await window.api.getAuthHeaders();
+        const headers = getAdminAuthHeaders();
         const res = await fetch(`/api/admin/approve-vendor/${userId}`, {
             method: 'POST',
             headers
@@ -112,7 +231,7 @@ async function loadUsers() {
     if (!container) return;
 
     try {
-        const headers = await window.api.getAuthHeaders();
+        const headers = getAdminAuthHeaders();
         const res = await fetch('/api/admin/users', { headers });
         if (res.ok) {
             const users = await res.json();
@@ -169,7 +288,7 @@ async function loadUsers() {
 
 async function toggleUserStatus(userId, makeActive) {
     try {
-        const headers = await window.api.getAuthHeaders();
+        const headers = getAdminAuthHeaders();
         const res = await fetch(`/api/admin/users/${userId}/status`, {
             method: 'PUT',
             headers,
@@ -186,7 +305,7 @@ async function toggleUserStatus(userId, makeActive) {
 async function clearDemoData() {
     if (!confirm('Are you sure you want to clear all demo data?')) return;
     try {
-        const headers = await window.api.getAuthHeaders();
+        const headers = getAdminAuthHeaders();
         const res = await fetch('/api/admin/demo-data', {
             method: 'DELETE',
             headers
