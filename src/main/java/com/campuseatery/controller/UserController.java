@@ -44,6 +44,8 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(Map.of("error", e.getMessage()));
         }
+    }
+
     @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(@RequestHeader("X-User-Id") String userId, @RequestBody com.campuseatery.dto.UserProfileDto dto) {
         try {

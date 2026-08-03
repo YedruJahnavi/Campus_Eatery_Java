@@ -70,6 +70,8 @@ public class UserService {
             user.setEmail(userId.contains("@") ? userId : userId + "@campus.edu");
             return userRepository.save(user);
         });
+    }
+
     public User updateProfile(String userId, com.campuseatery.dto.UserProfileDto dto) {
         User user = getMe(userId);
         if (dto.getName() != null) user.setName(dto.getName());
