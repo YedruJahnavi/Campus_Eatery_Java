@@ -52,6 +52,7 @@ public class DataInitializer implements CommandLineRunner {
                 m1.setPricePaise(18000); // ₹180.00
                 m1.setCategory("North Indian");
                 m1.setIsAvailable(true);
+                m1.setIsDemo(true);
 
                 MenuItem m2 = new MenuItem();
                 m2.setStallId(stall1.getId());
@@ -60,6 +61,7 @@ public class DataInitializer implements CommandLineRunner {
                 m2.setPricePaise(9000); // ₹90.00
                 m2.setCategory("Snacks");
                 m2.setIsAvailable(true);
+                m2.setIsDemo(true);
 
                 MenuItem m3 = new MenuItem();
                 m3.setStallId(stall1.getId());
@@ -68,6 +70,7 @@ public class DataInitializer implements CommandLineRunner {
                 m3.setPricePaise(8000); // ₹80.00
                 m3.setCategory("Beverages");
                 m3.setIsAvailable(true);
+                m3.setIsDemo(true);
 
                 menuItemRepository.saveAll(Arrays.asList(m1, m2, m3));
 
@@ -98,6 +101,7 @@ public class DataInitializer implements CommandLineRunner {
                 m4.setPricePaise(12000); // ₹120.00
                 m4.setCategory("Rolls");
                 m4.setIsAvailable(true);
+                m4.setIsDemo(true);
 
                 MenuItem m5 = new MenuItem();
                 m5.setStallId(stall2.getId());
@@ -106,6 +110,7 @@ public class DataInitializer implements CommandLineRunner {
                 m5.setPricePaise(15000); // ₹150.00
                 m5.setCategory("Bowls");
                 m5.setIsAvailable(true);
+                m5.setIsDemo(true);
 
                 MenuItem m6 = new MenuItem();
                 m6.setStallId(stall2.getId());
@@ -114,6 +119,7 @@ public class DataInitializer implements CommandLineRunner {
                 m6.setPricePaise(6000); // ₹60.00
                 m6.setCategory("Beverages");
                 m6.setIsAvailable(true);
+                m6.setIsDemo(true);
 
                 menuItemRepository.saveAll(Arrays.asList(m4, m5, m6));
 
@@ -144,6 +150,7 @@ public class DataInitializer implements CommandLineRunner {
                 m7.setPricePaise(13000); // ₹130.00
                 m7.setCategory("Burgers");
                 m7.setIsAvailable(true);
+                m7.setIsDemo(true);
 
                 MenuItem m8 = new MenuItem();
                 m8.setStallId(stall3.getId());
@@ -152,6 +159,7 @@ public class DataInitializer implements CommandLineRunner {
                 m8.setPricePaise(10000); // ₹100.00
                 m8.setCategory("Sides");
                 m8.setIsAvailable(true);
+                m8.setIsDemo(true);
 
                 menuItemRepository.saveAll(Arrays.asList(m7, m8));
 

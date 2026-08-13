@@ -27,6 +27,10 @@ public class UserService {
         if (addresses.isEmpty()) {
             DeliveryAddress emptyAddress = new DeliveryAddress();
             emptyAddress.setAddressLine("");
+            emptyAddress.setAddressLine1("");
+            emptyAddress.setAddressLine2("");
+            emptyAddress.setCity("");
+            emptyAddress.setPincode("");
             emptyAddress.setLabel("");
             return emptyAddress;
         }
@@ -34,7 +38,7 @@ public class UserService {
     }
 
     public DeliveryAddress updateAddress(String userId, AddressDto dto) {
-        if (dto.getAddressLine() == null || dto.getAddressLine().trim().isEmpty()) {
+        if (dto.getAddressLine1() == null || dto.getAddressLine1().trim().isEmpty()) {
             throw new IllegalArgumentException("Address line is required");
         }
 
@@ -47,7 +51,11 @@ public class UserService {
             address = addresses.get(0);
         }
         
-        address.setAddressLine(dto.getAddressLine());
+        address.setAddressLine(dto.getAddressLine1());
+        address.setAddressLine1(dto.getAddressLine1());
+        address.setAddressLine2(dto.getAddressLine2() != null ? dto.getAddressLine2() : "");
+        address.setCity(dto.getCity() != null ? dto.getCity() : "");
+        address.setPincode(dto.getPincode() != null ? dto.getPincode() : "");
         address.setLabel(dto.getLabel() != null ? dto.getLabel() : "Campus");
         
         return addressRepository.save(address);

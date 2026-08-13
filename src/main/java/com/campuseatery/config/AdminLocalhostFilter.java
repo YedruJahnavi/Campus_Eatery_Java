@@ -17,7 +17,7 @@ public class AdminLocalhostFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
-        if (path.startsWith("/admin.html") || path.startsWith("/api/admin")) {
+        if (path.startsWith("/admin") || path.startsWith("/api/admin")) {
             if (!isLocalhost(request)) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 if (path.startsWith("/api/")) {

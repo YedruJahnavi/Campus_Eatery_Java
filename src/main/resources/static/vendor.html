@@ -12,26 +12,46 @@
     <div class="app-container">
         <!-- Navigation -->
         <nav class="navbar">
-            <a href="index.html" class="nav-brand text-gradient">Campus Eatery</a>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link"><ion-icon name="restaurant-outline"></ion-icon> Vendors</a>
-                <a href="#" class="nav-link" id="cartToggleBtn"><ion-icon name="cart-outline"></ion-icon> Cart</a>
+            <div class="nav-inner">
+                <a href="index.html" class="nav-brand">
+                    <span class="brand-mark"><ion-icon name="restaurant"></ion-icon></span>
+                    Campus Eatery
+                </a>
+                <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.closest('.navbar').classList.toggle('nav-open')">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </button>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link"><ion-icon name="restaurant-outline"></ion-icon> Vendors</a>
+                    <a href="#" class="nav-link" id="cartToggleBtn">
+                        <ion-icon name="cart-outline"></ion-icon> Cart
+                        <span id="cartCountBadge" class="cart-count" style="display:none;">0</span>
+                    </a>
+                </div>
             </div>
         </nav>
 
         <!-- Main Content -->
         <main class="main-content" id="appRoot">
-            <div id="vendorHeader" class="glass-panel" style="padding: 2rem; margin-bottom: 2rem;">
+            <div class="glass-panel vendor-hero">
+                <a href="index.html" class="btn btn-glass btn-sm" style="margin-bottom: 1.2rem;">
+                    <ion-icon name="arrow-back-outline"></ion-icon> Back to Vendors
+                </a>
                 <h1 id="vendorName" class="text-gradient">Loading...</h1>
-                <p id="vendorDesc" class="text-secondary" style="margin-top: 0.5rem;"></p>
-                <div style="margin-top: 1rem; display: flex; gap: 1rem; color: var(--text-muted);">
-                    <span id="vendorLocation"><ion-icon name="location-outline"></ion-icon> </span>
-                    <span id="vendorRating" style="color: var(--warning);"><ion-icon name="star"></ion-icon> </span>
+                <p class="vendor-desc" id="vendorDesc"></p>
+                <div class="vendor-badges">
+                    <span class="pill pill-slate" id="vendorLocation"><ion-icon name="location-outline"></ion-icon> Loading...</span>
+                    <span class="pill pill-amber" id="vendorRating"><ion-icon name="star"></ion-icon> --</span>
+                    <span class="pill pill-green"><ion-icon name="checkmark-circle-outline"></ion-icon> Verified Stall</span>
                 </div>
             </div>
 
-            <h2 style="margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-glass); padding-bottom: 0.5rem;">Menu Items</h2>
-            
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Menu Items</h2>
+                    <p class="section-sub">Freshly prepared, straight from the kitchen.</p>
+                </div>
+            </div>
+
             <div class="menu-grid" id="menuList">
                 <p class="text-secondary">Loading menu...</p>
             </div>
@@ -42,16 +62,18 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
-            <h2>Your Order</h2>
+            <h2><ion-icon name="cart-outline"></ion-icon> Your Order</h2>
             <button class="close-btn" id="closeCartBtn"><ion-icon name="close-outline"></ion-icon></button>
         </div>
-        <div class="cart-items" id="cartItemsContainer"></div>
+        <div class="cart-items" id="cartItemsContainer">
+            <!-- Loaded via JS -->
+        </div>
         <div class="cart-footer">
             <div class="cart-total">
                 <span>Total</span>
                 <span id="cartTotalValue">₹0.00</span>
             </div>
-            <button class="btn btn-primary" style="width: 100%;" id="checkoutBtn">Proceed to Checkout</button>
+            <button class="btn btn-primary btn-block" id="checkoutBtn">Proceed to Checkout</button>
         </div>
     </div>
 
@@ -59,5 +81,20 @@
     <script src="js/api.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/vendor.js"></script>
+    <script>
+        (function () {
+            var badge = document.getElementById('cartCountBadge');
+            if (!badge) return;
+            function refresh() {
+                if (!window.api) return;
+                window.api.getCart().then(function (cart) {
+                    var n = cart && cart.items ? cart.items.length : 0;
+                    badge.style.display = n > 0 ? 'inline-flex' : 'none';
+                    badge.innerText = n;
+                }).catch(function () { badge.style.display = 'none'; });
+            }
+            refresh();
+        })();
+    </script>
 </body>
 </html>

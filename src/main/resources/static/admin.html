@@ -11,135 +11,150 @@
 <body>
     <div class="app-container">
         <nav class="navbar">
-            <a href="index.html" class="nav-brand text-gradient">Campus Eatery</a>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link"><ion-icon name="storefront-outline"></ion-icon> Storefront</a>
-                <a href="dashboard.html" class="nav-link"><ion-icon name="restaurant-outline"></ion-icon> Vendor Portal</a>
-                <span style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; font-size: 0.85rem;">Admin Mode</span>
+            <div class="nav-inner">
+                <a href="index.html" class="nav-brand">
+                    <span class="brand-mark"><ion-icon name="restaurant"></ion-icon></span>
+                    Campus Eatery
+                </a>
+                <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.closest('.navbar').classList.toggle('nav-open')">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </button>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link"><ion-icon name="storefront-outline"></ion-icon> Storefront</a>
+                    <a href="dashboard.html" class="nav-link"><ion-icon name="restaurant-outline"></ion-icon> Vendor Portal</a>
+                    <span class="pill pill-red"><ion-icon name="shield-checkmark-outline"></ion-icon> Admin Mode</span>
+                </div>
             </div>
         </nav>
 
-        <main class="main-content" style="max-width: 1200px; padding: 2rem;">
-            <!-- Admin Login Container -->
-            <div id="adminLoginContainer" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
-                <div class="glass-panel" style="width: 100%; max-width: 420px; padding: 2.5rem; text-align: center;">
-                    <div style="background: rgba(239,68,68,0.15); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
-                        <ion-icon name="shield-checkmark-outline" style="font-size: 2.2rem; color: #f87171;"></ion-icon>
-                    </div>
-                    <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Admin Authentication</h2>
-                    <p class="text-secondary" style="font-size: 0.9rem; margin-bottom: 2rem;">Localhost credentials required to access system administration.</p>
-                    
-                    <div id="clerkAdminAuthSection" style="display: none; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 0.5rem;">Active Clerk Session:</p>
-                        <p id="clerkUserEmailDisplay" style="font-weight: 600; color: #60a5fa; word-break: break-all; margin-bottom: 1rem;"></p>
-                        <button id="clerkAdminLoginBtn" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-weight: 600; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; border-radius: 8px; cursor: pointer;">
-                            <ion-icon name="log-in-outline" style="margin-right: 0.4rem;"></ion-icon> Access Admin Portal with Clerk Account
-                        </button>
-                    </div>
+        <main class="main-content">
+            <!-- Admin Login -->
+            <div id="adminLoginContainer" style="display: flex;">
+                <div class="auth-wrap">
+                    <div class="glass-panel auth-card">
+                        <div class="auth-icon"><ion-icon name="shield-checkmark-outline"></ion-icon></div>
+                        <h2>Admin Authentication</h2>
+                        <p class="auth-sub">Localhost credentials required to access system administration.</p>
 
-                    <form id="adminLoginForm" style="display: flex; flex-direction: column; gap: 1.2rem; text-align: left;">
-                        <div id="credentialsHeader" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-align: center;">Or Login with Environment Credentials</div>
-                        <div>
-                            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-secondary);">Username</label>
-                            <input type="text" id="adminUsername" placeholder="Enter admin username" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+                        <div id="clerkAdminAuthSection" style="display: none;">
+                            <p style="font-size: 0.85rem; color: var(--text-3); margin-bottom: 0.5rem;">Active Clerk Session:</p>
+                            <p id="clerkUserEmailDisplay" style="font-weight: 600; color: var(--blue); word-break: break-all; margin-bottom: 1rem;"></p>
+                            <button id="clerkAdminLoginBtn" class="btn btn-primary btn-block">
+                                <ion-icon name="log-in-outline"></ion-icon> Access Admin Portal with Clerk Account
+                            </button>
+                            <div class="auth-divider">or login with credentials</div>
                         </div>
-                        <div>
-                            <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-secondary);">Password</label>
-                            <input type="password" id="adminPassword" placeholder="Enter admin password" class="form-control" style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
-                        </div>
-                        <div id="adminLoginError" style="color: #f87171; font-size: 0.85rem; text-align: center; display: none;"></div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-weight: 600; margin-top: 0.5rem; background: linear-gradient(135deg, #ef4444, #dc2626); border: none; border-radius: 8px; cursor: pointer;">
-                            Authenticate Admin Credentials
-                        </button>
-                    </form>
+
+                        <form id="adminLoginForm" style="text-align: left;">
+                            <div class="form-group">
+                                <label class="form-label" for="adminUsername">Username</label>
+                                <input type="text" id="adminUsername" placeholder="Enter admin username" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="adminPassword">Password</label>
+                                <input type="password" id="adminPassword" placeholder="Enter admin password" class="form-control" required>
+                            </div>
+                            <div id="adminLoginError" style="color: var(--red); font-size: 0.85rem; text-align: center; display: none;"></div>
+                            <button type="submit" class="btn btn-danger btn-block">
+                                <ion-icon name="shield-checkmark-outline"></ion-icon> Authenticate Admin Credentials
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
 
-            <!-- Admin Dashboard Content -->
+            <!-- Admin Dashboard -->
             <div id="adminDashboardContent" style="display: none;">
-                <!-- Header -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div class="page-head">
                     <div>
-                        <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;">System Administration</h1>
-                        <p class="text-secondary">Overview of platform metrics, vendor applications, and user accounts.</p>
+                        <h1 class="page-title">System Administration</h1>
+                        <p class="page-sub">Overview of platform metrics, vendor applications, and user accounts.</p>
                     </div>
-                    <div style="display: flex; gap: 1rem;">
-                        <button class="btn btn-glass" id="adminLogoutBtn" style="color: #a1a1aa; border-color: rgba(255,255,255,0.2);">
-                            <ion-icon name="log-out-outline"></ion-icon> Logout
-                        </button>
-                        <button class="btn btn-glass" id="resetDemoBtn" style="color: #f87171; border-color: rgba(239,68,68,0.3);">
-                            <ion-icon name="trash-outline"></ion-icon> Clear Demo Data
-                        </button>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <button class="btn btn-glass btn-sm" id="adminLogoutBtn"><ion-icon name="log-out-outline"></ion-icon> Logout</button>
+                        <button class="btn btn-danger btn-sm" id="resetDemoBtn"><ion-icon name="trash-outline"></ion-icon> Clear Demo Data</button>
                     </div>
                 </div>
 
-                <!-- Stats Grid -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 3rem;">
-                    <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
-                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Total Users</span>
-                        <h2 id="statUsers" style="font-size: 2.5rem; margin-top: 0.5rem; color: var(--accent-primary);">--</h2>
+                <!-- Stats -->
+                <div class="stats-grid" style="margin-bottom: 2.75rem;">
+                    <div class="glass-panel stat-card tone-blue">
+                        <div class="stat-icon"><ion-icon name="people-outline"></ion-icon></div>
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-value" id="statUsers">--</div>
                     </div>
-                    <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
-                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Approved Vendors</span>
-                        <h2 id="statVendors" style="font-size: 2.5rem; margin-top: 0.5rem; color: #818cf8;">--</h2>
+                    <div class="glass-panel stat-card tone-violet">
+                        <div class="stat-icon"><ion-icon name="storefront-outline"></ion-icon></div>
+                        <div class="stat-label">Approved Vendors</div>
+                        <div class="stat-value" id="statVendors">--</div>
                     </div>
-                    <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
-                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Total Orders</span>
-                        <h2 id="statOrders" style="font-size: 2.5rem; margin-top: 0.5rem; color: #fbbf24;">--</h2>
+                    <div class="glass-panel stat-card tone-amber">
+                        <div class="stat-icon"><ion-icon name="receipt-outline"></ion-icon></div>
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value" id="statOrders">--</div>
                     </div>
-                    <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
-                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Platform Revenue</span>
-                        <h2 id="statRevenue" style="font-size: 2.5rem; margin-top: 0.5rem; color: #34d399;">₹0.00</h2>
+                    <div class="glass-panel stat-card tone-green">
+                        <div class="stat-icon"><ion-icon name="cash-outline"></ion-icon></div>
+                        <div class="stat-label">Platform Revenue</div>
+                        <div class="stat-value" id="statRevenue">₹0.00</div>
                     </div>
                 </div>
 
-                <!-- Pending Vendor Applications Section -->
-                <div style="margin-bottom: 3rem;">
-                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <ion-icon name="time-outline" style="color: #fbbf24;"></ion-icon> Pending Vendor Requests
-                    </h2>
-                    <div class="glass-panel" style="padding: 1.5rem;">
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>User Email / ID</th>
-                                        <th>Stall Name</th>
-                                        <th>Location</th>
-                                        <th>FSSAI License</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="vendorRequestsBody">
-                                    <tr><td colspan="5" class="text-center text-secondary">Loading pending requests...</td></tr>
-                                </tbody>
-                            </table>
+                <!-- Pending Vendor Applications -->
+                <div class="section" style="padding-top: 0;">
+                    <div class="section-head">
+                        <div>
+                            <h2 class="section-title">
+                                <ion-icon name="time-outline" style="color: var(--amber); vertical-align: -2px;"></ion-icon>
+                                Pending Vendor Requests
+                            </h2>
+                            <p class="section-sub">Approve or review new stall applications.</p>
                         </div>
                     </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User Email / ID</th>
+                                    <th>Stall Name</th>
+                                    <th>Location</th>
+                                    <th>FSSAI License</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vendorRequestsBody">
+                                <tr><td colspan="5" class="text-center text-secondary">Loading pending requests...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <!-- All Users Section -->
-                <div>
-                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <ion-icon name="people-outline" style="color: #818cf8;"></ion-icon> Registered Users
-                    </h2>
-                    <div class="glass-panel" style="padding: 1.5rem;">
-                        <div class="table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>User ID</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="usersBody">
-                                    <tr><td colspan="5" class="text-center text-secondary">Loading users...</td></tr>
-                                </tbody>
-                            </table>
+                <!-- All Users -->
+                <div class="section" style="padding-top: 0;">
+                    <div class="section-head">
+                        <div>
+                            <h2 class="section-title">
+                                <ion-icon name="people-outline" style="color: var(--violet); vertical-align: -2px;"></ion-icon>
+                                Registered Users
+                            </h2>
+                            <p class="section-sub">Manage user accounts and access status.</p>
                         </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersBody">
+                                <tr><td colspan="5" class="text-center text-secondary">Loading users...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

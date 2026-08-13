@@ -88,7 +88,7 @@ public class OrderService {
         order.setPlatformFee(0.0);
         order.setGst(gst);
         order.setGrandTotal(grandTotal);
-        order.setStatus("placed");
+        order.setStatus("PLACED");
         order.setIdempotencyKey(UUID.randomUUID().toString());
         order.setDeliveryCode(String.valueOf((int)(Math.random() * 9000) + 1000));
         order.setDeliveryAddressId(address.getId());
@@ -133,12 +133,23 @@ public class OrderService {
             throw new SecurityException("Forbidden: Order does not belong to your stall");
         }
 
-        order.setStatus(status);
+        order.setStatus(normalizeStatus(status));
         Order updatedOrder = orderRepository.save(order);
 
         simpMessagingTemplate.convertAndSend("/topic/user_" + order.getStudentId(), updatedOrder);
         simpMessagingTemplate.convertAndSend("/topic/orders/" + vendorId, updatedOrder);
 
         return updatedOrder;
+    }
+
+    private String normalizeStatus(String status) {
+        if (status == null || status.trim().isEmpty()) {
+            throw new IllegalArgumentException("Order status is required");
+        }
+        String normalized = status.trim().toUpperCase();
+        if (!List.of("PLACED", "PREPARING", "READY_FOR_PICKUP", "DELIVERED", "CANCELLED", "COMPLETED").contains(normalized)) {
+            throw new IllegalArgumentException("Invalid order status: " + status);
+        }
+        return normalized;
     }
 }

@@ -22,7 +22,9 @@ public class ApiService {
 
     public List<Map<String, Object>> getRecommendations(String userId, int limit) {
         // Simplified recommendation logic in Java memory
-        List<Order> orders = orderRepository.findByStatus("delivered");
+        List<Order> orders = orderRepository.findAll().stream()
+            .filter(o -> "DELIVERED".equalsIgnoreCase(o.getStatus()))
+            .collect(Collectors.toList());
 
         Map<String, Integer> itemScores = new HashMap<>();
 

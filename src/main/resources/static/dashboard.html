@@ -13,154 +13,160 @@
 <body>
     <div class="app-container">
         <nav class="navbar">
-            <a href="index.html" class="nav-brand text-gradient">Campus Eatery</a>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link"><ion-icon name="storefront-outline"></ion-icon> Storefront</a>
-                <a href="admin.html" class="nav-link" style="color: #f87171;"><ion-icon name="shield-checkmark-outline"></ion-icon> Admin</a>
-                <div style="background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); padding: 0.35rem 0.9rem; border-radius: 20px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
-                    <span style="width: 8px; height: 8px; background: #34d399; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite;"></span>
-                    Accepting Orders
+            <div class="nav-inner">
+                <a href="index.html" class="nav-brand">
+                    <span class="brand-mark"><ion-icon name="restaurant"></ion-icon></span>
+                    Campus Eatery
+                </a>
+                <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.closest('.navbar').classList.toggle('nav-open')">
+                    <ion-icon name="menu-outline"></ion-icon>
+                </button>
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link"><ion-icon name="storefront-outline"></ion-icon> Storefront</a>
+                    <a href="admin.html" class="nav-link" style="color: #ff5d6c;"><ion-icon name="shield-checkmark-outline"></ion-icon> Admin</a>
+                    <span class="pill pill-green">
+                        <span class="status-dot pulse"></span>
+                        Accepting Orders
+                    </span>
                 </div>
             </div>
         </nav>
 
-        <main class="main-content" style="max-width: 1200px; padding: 2rem;">
+        <main class="main-content">
             <!-- Header -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div class="page-head">
                 <div>
-                    <h1 style="font-size: 2.2rem; margin-bottom: 0.5rem;" id="stallHeaderTitle">Vendor Operations Portal</h1>
-                    <p class="text-secondary">Real-time order fulfillment, menu availability, and revenue management.</p>
+                    <h1 class="page-title" id="stallHeaderTitle">Vendor Operations Portal</h1>
+                    <p class="page-sub">Real-time order fulfillment, menu availability, and revenue management.</p>
                 </div>
-                <span id="wsStatus" style="font-size: 0.85rem; color: #a1a1aa; background: rgba(255,255,255,0.05); padding: 0.4rem 0.8rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                <span class="status-chip" id="wsStatus">
+                    <span class="status-dot"></span>
                     Connecting WebSocket...
                 </span>
             </div>
 
-            <!-- 📊 1. Real-Time Key Metrics Bar -->
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem;">
-                <div class="glass-panel" style="padding: 1.5rem; text-align: center; position: relative;">
-                    <div style="position: absolute; top: 1rem; right: 1rem; color: #fbbf24;">
-                        <ion-icon name="time-outline" style="font-size: 1.8rem;"></ion-icon>
-                    </div>
-                    <span style="color: var(--text-secondary); font-size: 0.9rem;">Active Orders</span>
-                    <h2 id="metricActiveOrders" style="font-size: 2.5rem; margin-top: 0.5rem; color: #fbbf24;">0</h2>
+            <!-- Real-Time Metrics -->
+            <div class="stats-grid" style="margin-bottom: 2.75rem;">
+                <div class="glass-panel stat-card tone-amber">
+                    <div class="stat-icon"><ion-icon name="time-outline"></ion-icon></div>
+                    <div class="stat-label">Active Orders</div>
+                    <div class="stat-value" id="metricActiveOrders">0</div>
                 </div>
-
-                <div class="glass-panel" style="padding: 1.5rem; text-align: center; position: relative;">
-                    <div style="position: absolute; top: 1rem; right: 1rem; color: #34d399;">
-                        <ion-icon name="cash-outline" style="font-size: 1.8rem;"></ion-icon>
-                    </div>
-                    <span style="color: var(--text-secondary); font-size: 0.9rem;">Today's Revenue</span>
-                    <h2 id="metricTodayRevenue" style="font-size: 2.5rem; margin-top: 0.5rem; color: #34d399;">₹0.00</h2>
+                <div class="glass-panel stat-card tone-green">
+                    <div class="stat-icon"><ion-icon name="cash-outline"></ion-icon></div>
+                    <div class="stat-label">Today's Revenue</div>
+                    <div class="stat-value" id="metricTodayRevenue">₹0.00</div>
                 </div>
-
-                <div class="glass-panel" style="padding: 1.5rem; text-align: center; position: relative;">
-                    <div style="position: absolute; top: 1rem; right: 1rem; color: #818cf8;">
-                        <ion-icon name="fast-food-outline" style="font-size: 1.8rem;"></ion-icon>
-                    </div>
-                    <span style="color: var(--text-secondary); font-size: 0.9rem;">Total Menu Items</span>
-                    <h2 id="metricTotalMenuItems" style="font-size: 2.5rem; margin-top: 0.5rem; color: #818cf8;">0</h2>
+                <div class="glass-panel stat-card tone-violet">
+                    <div class="stat-icon"><ion-icon name="fast-food-outline"></ion-icon></div>
+                    <div class="stat-label">Total Menu Items</div>
+                    <div class="stat-value" id="metricTotalMenuItems">0</div>
                 </div>
             </div>
 
-            <!-- ⚡ 2. Live Order Processing Engine -->
-            <div style="margin-bottom: 3.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-                    <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <ion-icon name="flash-outline" style="color: #fbbf24;"></ion-icon> Live Customer Orders
-                    </h2>
-                    <button class="btn btn-glass" id="refreshOrdersBtn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+            <!-- Live Orders -->
+            <div class="section" style="padding-top: 0;">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title">
+                            <ion-icon name="flash-outline" style="color: var(--amber); vertical-align: -2px;"></ion-icon>
+                            Live Customer Orders
+                        </h2>
+                        <p class="section-sub">Incoming orders update in real time over WebSocket.</p>
+                    </div>
+                    <button class="btn btn-glass btn-sm" id="refreshOrdersBtn">
                         <ion-icon name="refresh-outline"></ion-icon> Refresh Orders
                     </button>
                 </div>
 
-                <div id="liveOrdersContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem;">
-                    <div class="glass-panel text-center" style="padding: 2.5rem; grid-column: 1/-1; color: var(--text-secondary);">
-                        <ion-icon name="restaurant-outline" style="font-size: 3rem; margin-bottom: 0.5rem; color: rgba(255,255,255,0.2);"></ion-icon>
+                <div class="orders-grid" id="liveOrdersContainer">
+                    <div class="glass-panel empty-state">
+                        <ion-icon name="restaurant-outline"></ion-icon>
                         <p>No active incoming orders at the moment.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- 🍔 3. Digital Menu Management -->
-            <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-                    <h2 style="font-size: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
-                        <ion-icon name="restaurant-outline" style="color: #818cf8;"></ion-icon> Digital Menu Management
-                    </h2>
-                    <button class="btn btn-primary" id="addBtn" style="padding: 0.6rem 1.2rem;">
+            <!-- Digital Menu Management -->
+            <div class="section" style="padding-top: 0;">
+                <div class="section-head">
+                    <div>
+                        <h2 class="section-title">
+                            <ion-icon name="restaurant-outline" style="color: var(--violet); vertical-align: -2px;"></ion-icon>
+                            Digital Menu Management
+                        </h2>
+                        <p class="section-sub">Keep your menu live and your stock accurate.</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="addBtn">
                         <ion-icon name="add-circle-outline"></ion-icon> Add New Item
                     </button>
                 </div>
 
-                <div class="glass-panel" style="padding: 1.5rem;">
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Item Details</th>
-                                    <th>Category</th>
-                                    <th>Price</th>
-                                    <th>In-Stock Availability</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="vendorMenuBody">
-                                <tr><td colspan="5" class="text-center text-secondary">Loading menu items...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item Details</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>In-Stock Availability</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendorMenuBody">
+                            <tr><td colspan="5" class="text-center text-secondary">Loading menu items...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </main>
     </div>
 
     <!-- Add/Edit Menu Item Modal -->
-    <div class="sidebar-overlay" id="itemModalOverlay" style="display: none; z-index: 1000;"></div>
-    <div id="itemModal" style="display: none; fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); position: fixed; width: 90%; max-width: 480px; z-index: 1001; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h3 id="modalTitle" style="font-size: 1.5rem;">Add Menu Item</h3>
-            <button id="closeModalBtn" class="close-btn" style="background: none; border: none; color: #a1a1aa; font-size: 1.8rem; cursor: pointer;">
-                <ion-icon name="close-outline"></ion-icon>
-            </button>
+    <div class="modal-overlay" id="itemModalOverlay" style="display: none;"></div>
+    <div class="modal-box" id="itemModal" style="display: none;">
+        <div class="modal-head">
+            <h3 id="modalTitle">Add Menu Item</h3>
+            <button id="closeModalBtn" class="close-btn"><ion-icon name="close-outline"></ion-icon></button>
         </div>
-        <form id="itemForm" style="display: flex; flex-direction: column; gap: 1.1rem;">
+        <form id="itemForm" class="modal-form">
             <input type="hidden" id="itemId">
-            
+
             <div>
-                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">Item Name</label>
-                <input type="text" id="itemName" required placeholder="e.g. Paneer Butter Masala" class="form-control" style="width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+                <label class="form-label" for="itemName">Item Name</label>
+                <input type="text" id="itemName" required placeholder="e.g. Paneer Butter Masala" class="form-control">
             </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+
+            <div class="form-row">
                 <div>
-                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">Price (in ₹)</label>
-                    <input type="number" id="itemPriceRupees" required min="1" step="0.5" placeholder="150" class="form-control" style="width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+                    <label class="form-label" for="itemPriceRupees">Price (in ₹)</label>
+                    <input type="number" id="itemPriceRupees" required min="1" step="0.5" placeholder="150" class="form-control">
                 </div>
                 <div>
-                    <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">Category</label>
-                    <input type="text" id="itemCategory" required placeholder="e.g. North Indian / Snacks" class="form-control" style="width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+                    <label class="form-label" for="itemCategory">Category</label>
+                    <input type="text" id="itemCategory" required placeholder="e.g. North Indian / Snacks" class="form-control">
                 </div>
             </div>
 
             <div>
-                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">Description</label>
-                <textarea id="itemDesc" required rows="2" placeholder="Brief summary of ingredients and dish preparation" class="form-control" style="width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff; font-family: inherit;"></textarea>
+                <label class="form-label" for="itemDesc">Description</label>
+                <textarea id="itemDesc" required rows="2" placeholder="Brief summary of ingredients and dish preparation" class="form-control"></textarea>
             </div>
 
             <div>
-                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-secondary);">Image URL (Optional)</label>
-                <input type="url" id="itemImageUrl" placeholder="https://images.unsplash.com/..." class="form-control" style="width: 100%; padding: 0.7rem 0.9rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: #fff;">
+                <label class="form-label" for="itemImageUrl">Image URL (Optional)</label>
+                <input type="url" id="itemImageUrl" placeholder="https://images.unsplash.com/..." class="form-control">
             </div>
 
-            <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.4rem;">
-                <input type="checkbox" id="itemAvailable" checked style="width: 18px; height: 18px; accent-color: #6366f1; cursor: pointer;">
-                <label for="itemAvailable" style="font-size: 0.9rem; cursor: pointer; color: #fff;">Item is in-stock and available for order</label>
+            <div style="display: flex; align-items: center; gap: 0.7rem;">
+                <label class="switch">
+                    <input type="checkbox" id="itemAvailable" checked>
+                    <span class="track"></span>
+                </label>
+                <label for="itemAvailable" style="font-size: 0.9rem; cursor: pointer; color: var(--text);">Item is in-stock and available for order</label>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.8rem; font-weight: 600; margin-top: 0.5rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; border-radius: 8px; cursor: pointer;">
-                Save Menu Item
-            </button>
+            <button type="submit" class="btn btn-primary btn-block">Save Menu Item</button>
         </form>
     </div>
 

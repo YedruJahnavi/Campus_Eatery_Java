@@ -32,6 +32,9 @@ public class SecurityConfig {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Map<String, Object> metadata = jwt.getClaim("publicMetadata");
+            if (metadata == null) {
+                metadata = jwt.getClaim("public_metadata");
+            }
             if (metadata != null && metadata.containsKey("role")) {
                 String role = (String) metadata.get("role");
                 return List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
@@ -49,6 +52,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints
                 .requestMatchers("/api/admin/login").permitAll()
+                .requestMatchers("/api/admin/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/vendors/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()

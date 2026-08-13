@@ -24,7 +24,7 @@ public class ReviewService {
         Order order = orderRepository.findById(dto.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
                 
-        if (!order.getStudentId().equals(userId) || !"delivered".equals(order.getStatus())) {
+        if (!order.getStudentId().equals(userId) || !"delivered".equalsIgnoreCase(order.getStatus())) {
             throw new IllegalArgumentException("Order not eligible for review");
         }
 

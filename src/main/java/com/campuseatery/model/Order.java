@@ -50,5 +50,9 @@ public class Order {
         private String name = "";
         private Integer quantity;
         private Double unitPricePaise;
+
+        public Double getPricePaise() {
+            return unitPricePaise;
+        }
     }
 }

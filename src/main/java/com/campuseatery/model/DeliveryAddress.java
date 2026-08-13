@@ -13,6 +13,10 @@ public class DeliveryAddress {
     private String userId; // Reference to User
     private String label;
     private String addressLine;
+    private String addressLine1;
+    private String addressLine2;
+    private String city;
+    private String pincode;
     private Double lat;
     private Double lon;
 }
