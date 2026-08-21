@@ -6,7 +6,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://primary-mammal-33.clerk.accounts.dev
+          issuer-uri: ${CLERK_ISSUER_URI}
+
+clerk:
+  publishable-key: ${CLERK_PUBLISHABLE_KEY}
+  frontend-api: ${CLERK_FRONTEND_API}
 
 server:
   port: ${PORT:8080}
