@@ -4,6 +4,7 @@ import com.campuseatery.service.ApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Map;
 
@@ -13,6 +14,20 @@ import java.util.Map;
 public class ApiController {
 
     private final ApiService apiService;
+
+    @Value("${clerk.publishable-key}")
+    private String clerkPublishableKey;
+
+    @Value("${clerk.frontend-api}")
+    private String clerkFrontendApi;
+
+    @GetMapping("/config")
+    public ResponseEntity<?> getConfig() {
+        return ResponseEntity.ok(Map.of(
+            "clerkPublishableKey", clerkPublishableKey,
+            "frontendApi", clerkFrontendApi
+        ));
+    }
 
     @GetMapping("/recommendations")
     public ResponseEntity<?> getRecommendations(
