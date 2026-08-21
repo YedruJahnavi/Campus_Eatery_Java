@@ -7,49 +7,48 @@
 
 :root {
     /* Surfaces */
-    --bg: #ffffff;
-    --bg-2: #f8f9fa;
-    --surface: #ffffff;
-    --surface-2: #f1f3f5;
-    --surface-3: #e9ecef;
-    --border: #e5e5e5;
-    --border-strong: #000000;
+    --bg: #0a0a0a;
+    --bg-2: #121212;
+    --surface: #1a1a1a;
+    --surface-2: #242424;
+    --surface-3: #2e2e2e;
+    --border: #333333;
+    --border-strong: #4d4d4d;
 
     /* Brand - Monochrome */
-    --accent: #000000;
-    --accent-2: #333333;
+    --accent: #ffffff;
+    --accent-2: #e0e0e0;
     
-    /* Functional Colors (Muted for monochrome fit) */
-    --amber: #000000;
-    --green: #000000;
-    --red: #000000;
-    --blue: #000000;
-    --violet: #000000;
+    /* Functional Colors (Grayscale for monochrome fit) */
+    --amber: #cccccc;
+    --green: #dddddd;
+    --red: #aaaaaa;
+    --blue: #bbbbbb;
+    --violet: #888888;
 
-    /* Gradients replaced with solids or subtle grays */
-    --grad-brand: #000000;
-    --grad-amber: #000000;
-    --grad-green: #000000;
-    --glow: rgba(0, 0, 0, 0.1);
+    /* Gradients */
+    --grad-brand: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+    --grad-accent: linear-gradient(135deg, #e6e6e6 0%, #808080 100%);
+    --glow: rgba(255, 255, 255, 0.05);
 
     /* Text */
-    --text: #000000;
-    --text-2: #555555;
-    --text-3: #888888;
+    --text: #ffffff;
+    --text-2: #a3a3a3;
+    --text-3: #737373;
 
     /* Shape / motion */
     --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 20px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
     --radius-pill: 999px;
-    --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --fast: 0.15s ease-out;
-    --smooth: 0.4s var(--ease);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --fast: 0.2s ease-out;
+    --smooth: 0.6s var(--ease);
 
-    /* Shadows - Clean & Minimal */
-    --shadow-1: 0 4px 12px rgba(0, 0, 0, 0.05);
-    --shadow-2: 0 12px 32px rgba(0, 0, 0, 0.08);
-    --shadow-glow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    /* Shadows - Deep & Sleek */
+    --shadow-1: 0 8px 24px rgba(0, 0, 0, 0.4);
+    --shadow-2: 0 16px 40px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 30px rgba(255, 255, 255, 0.1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -99,12 +98,12 @@ img { max-width: 100%; display: block; }
 .text-right { text-align: right; }
 
 .glass-panel {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-1);
+    background: rgba(20, 20, 20, 0.6);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
 }
 
 .visually-hidden {
@@ -138,16 +137,16 @@ img { max-width: 100%; display: block; }
 .btn:active { transform: translateY(0) scale(0.97); }
 
 .btn-primary, .btn-amber, .btn-green, .btn-dark {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
     box-shadow: var(--shadow-glow);
 }
 .btn-primary:hover, .btn-amber:hover, .btn-green:hover, .btn-dark:hover {
-    background: #333333;
-    border-color: #333333;
+    background: #d4d4d4;
+    border-color: #d4d4d4;
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 28px rgba(255, 255, 255, 0.15);
 }
 
 .btn-glass, .btn-light, .btn-outline {
@@ -244,17 +243,21 @@ img { max-width: 100%; display: block; }
    ========================================================= */
 .navbar {
     position: sticky;
-    top: 0;
+    top: 1rem;
     z-index: 200;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1.5rem;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    padding: 0.8rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 15, 15, 0.7);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-radius: var(--radius-pill);
+    max-width: 1200px;
+    margin: 1rem auto;
+    box-shadow: var(--shadow-2);
 }
 
 .nav-inner {
@@ -445,18 +448,18 @@ img { max-width: 100%; display: block; }
 .vendor-card {
     padding: 1.5rem;
     cursor: pointer;
-    background: var(--bg);
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 0;
+    border-radius: var(--radius-md);
     transition: transform var(--smooth), border-color var(--fast), box-shadow var(--smooth);
     display: flex;
     flex-direction: column;
 }
 
 .vendor-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--text);
-    box-shadow: 8px 8px 0px rgba(0,0,0,1);
+    transform: translateY(-6px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-glow);
 }
 
 .vendor-img-placeholder {
@@ -1228,6 +1231,20 @@ textarea.form-control { resize: vertical; }
     margin-bottom: 3rem;
     z-index: 2;
     position: relative;
+    color: var(--text-2);
+}
+
+.hero-bg-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 50%;
 }
 
 /* Marquee Background */
@@ -1306,8 +1323,8 @@ textarea.form-control { resize: vertical; }
 }
 
 .trending-card {
-    background: var(--bg);
-    border: 2px solid var(--border);
+    background: var(--surface);
+    border: 1px solid var(--border);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -1316,9 +1333,9 @@ textarea.form-control { resize: vertical; }
     border-radius: var(--radius-md);
 }
 .trending-card:hover {
-    border-color: var(--text);
-    transform: translateY(-5px);
-    box-shadow: 6px 6px 0px var(--text);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--shadow-glow);
 }
 .trending-card-img {
     width: 100%;

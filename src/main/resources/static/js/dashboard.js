@@ -1,6 +1,3 @@
-/**
- * Vendor Dashboard Logic
- */
 const API_BASE_URL = '/api';
 const VENDOR_ID = localStorage.getItem('mockVendorId') || 'vendor_test_123';
 
