@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Eatery | Premium Campus Dining</title>
+    <title>Campus Eatery | Skip the Line, Get Food Delivered</title>
+    <meta name="description" content="The fastest way to get your favorite college meals delivered directly to your hostel or classroom. Skip the campus food lines with Campus Eatery.">
+    <meta name="keywords" content="campus food delivery, university dining, student meals, order food campus, college food">
+    <meta property="og:title" content="Campus Eatery | Premium Campus Dining">
+    <meta property="og:description" content="Skip the campus food lines. Get hot meals delivered to your hostel in minutes.">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="css/styles.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -39,12 +44,11 @@
             <section class="hero-fullscreen">
                 <div class="hero-bg-glow"></div>
                 
-                <h1 class="hero-title">Your Campus.<br>Your Cravings.</h1>
-                <p class="hero-sub">Skip the line and get food delivered straight to your hostel or classroom in minutes.</p>
+                <h1 class="hero-title">Skip the Campus Food Lines.<br>Get Hot Meals Delivered in Minutes.</h1>
+                <p class="hero-sub">The fastest way to get your favorite college meals delivered directly to your hostel or classroom, so you can focus on studying (or sleeping).</p>
                 
-                <div class="hero-search-wrapper glass-panel">
-                    <input type="text" placeholder="Search for vendors or dishes..." class="form-control" style="flex:1; border:none; background:transparent;">
-                    <button class="btn btn-dark" id="exploreBtn">Search</button>
+                <div style="margin-top: 2rem;">
+                    <a href="#dynamicContent" class="btn btn-dark" style="font-size: 1.1rem; padding: 1rem 2rem; border-radius: 8px;">Explore Campus Menus</a>
                 </div>
                 <button class="btn btn-outline" id="dynamicVendorBtn" style="display: none; position:relative; z-index:2; margin-top: 1rem;">Become a Vendor</button>
             </section>
@@ -146,7 +150,7 @@
                 <!-- Final CTA -->
                 <section class="final-cta">
                     <h2>Ready to skip the line?</h2>
-                    <button class="btn btn-outline btn-lg" onclick="window.scrollTo({top:0, behavior:'smooth'})">Start Ordering Now</button>
+                    <a href="#dynamicContent" class="btn btn-outline btn-lg" style="text-decoration: none; display: inline-block;">Explore Campus Menus</a>
                 </section>
 
             </div>
