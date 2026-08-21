@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Eatery | Premium Campus Dining</title>
+    <title>Campus Eatery | Skip the Line, Get Food Delivered</title>
+    <meta name="description" content="The fastest way to get your favorite college meals delivered directly to your hostel or classroom. Skip the campus food lines with Campus Eatery.">
+    <meta name="keywords" content="campus food delivery, university dining, student meals, order food campus, college food">
+    <meta property="og:title" content="Campus Eatery | Premium Campus Dining">
+    <meta property="og:description" content="Skip the campus food lines. Get hot meals delivered to your hostel in minutes.">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="css/styles.css">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -22,8 +27,7 @@
                 </button>
                 <div class="nav-links">
                     <a href="#dynamicContent" class="nav-link"><ion-icon name="restaurant-outline"></ion-icon> Vendors</a>
-                    <a href="dashboard.html" class="nav-link"><ion-icon name="storefront-outline"></ion-icon> Vendor Portal</a>
-                    <a href="admin.html" class="nav-link"><ion-icon name="shield-checkmark-outline"></ion-icon> Admin</a>
+                    <!-- Admin and Vendor links are injected dynamically via auth.js or users are redirected upon login -->
                     <a href="#" class="nav-link" id="cartToggleBtn">
                         <ion-icon name="cart-outline"></ion-icon> Cart
                         <span id="cartCountBadge" class="cart-count" style="display:none;">0</span>
@@ -34,96 +38,122 @@
         </nav>
 
         <!-- Main Content -->
-        <main class="main-content" id="appRoot">
-            <!-- Hero -->
-            <section class="hero anim-fade-up">
-                <div>
-                    <span class="hero-badge"><ion-icon name="rocket-outline"></ion-icon> The #1 Campus Food App</span>
-                    <h1 class="hero-title">Delicious Campus Food,<br><span class="text-gradient">Delivered Fast.</span></h1>
-                    <p class="hero-sub">Skip the long queues. Order from your favorite campus stalls and enjoy seamless delivery right to your hostel or classroom in minutes.</p>
-                    <div class="hero-actions">
-                        <button class="btn btn-dark btn-lg" id="exploreBtn">Explore Vendors</button>
-                        <button class="btn btn-outline btn-lg" id="dynamicVendorBtn" style="display: none;">Become a Vendor</button>
-                    </div>
-                    <div class="hero-stats">
-                        <div class="hero-stat">
-                            <b>15+</b>
-                            <span>Campus Stalls</span>
-                        </div>
-                        <div class="hero-stat">
-                            <b>&lt; 15 min</b>
-                            <span>Avg. Delivery</span>
-                        </div>
-                        <div class="hero-stat">
-                            <b>4.8★</b>
-                            <span>Student Rating</span>
-                        </div>
-                    </div>
+        <main id="appRoot">
+            
+            <!-- Fullscreen Hero -->
+            <section class="hero-fullscreen">
+                <div class="hero-bg-glow"></div>
+                
+                <h1 class="hero-title">Skip the Campus Food Lines.<br>Get Hot Meals Delivered in Minutes.</h1>
+                <p class="hero-sub">The fastest way to get your favorite college meals delivered directly to your hostel or classroom, so you can focus on studying (or sleeping).</p>
+                
+                <div style="margin-top: 2rem;">
+                    <a href="#dynamicContent" class="btn btn-dark" style="font-size: 1.1rem; padding: 1rem 2rem; border-radius: 8px;">Explore Campus Menus</a>
                 </div>
-
-                <div class="hero-visual anim-fade-up d-2">
-                    <div class="hero-orb orb-a"></div>
-                    <div class="hero-orb orb-b"></div>
-                    <div class="hero-chip chip-top">
-                        <ion-icon name="flash-outline" style="color: var(--text);"></ion-icon>
-                        Live Orders
-                    </div>
-                    <div class="hero-chip chip-bottom">
-                        <ion-icon name="star" style="color: var(--text);"></ion-icon>
-                        4.8 / 5 rating
-                    </div>
-                    <div class="hero-card">
-                        <div class="hero-card-face"><ion-icon name="fast-food"></ion-icon></div>
-                        <div class="hero-card-label">LIVE ORDERS</div>
-                    </div>
-                </div>
+                <button class="btn btn-outline" id="dynamicVendorBtn" style="display: none; position:relative; z-index:2; margin-top: 1rem;">Become a Vendor</button>
             </section>
 
             <!-- Vendor Status Banner -->
-            <div id="vendorStatusBanner" style="display: none;" class="alert">
+            <div id="vendorStatusBanner" style="display: none; max-width: 1240px; margin: 0 auto 2rem;" class="alert">
                 <ion-icon name="time-outline"></ion-icon>
                 <span><b>Your vendor application is under review.</b> We will notify you as soon as an admin approves your stall!</span>
             </div>
 
-            <!-- How It Works -->
-            <section id="how-it-works" class="section" style="padding-top: 1rem;">
-                <div class="section-head" style="justify-content: center; text-align: center;">
-                    <div>
-                        <h2 class="section-title">How It Works</h2>
-                        <p class="section-sub">Your favorite meals are just three steps away.</p>
+            <div class="main-content" style="padding-top: 0;">
+                
+                <!-- Trending Items -->
+                <section class="section" style="padding-top: 0;">
+                    <div class="section-head">
+                        <div>
+                            <h2 class="section-title">Trending Today</h2>
+                            <p class="section-sub">What everyone is ordering right now.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="steps-grid">
-                    <div class="glass-panel step-card step-1">
-                        <div class="step-num">1</div>
-                        <h3>Choose a Stall</h3>
-                        <p>Browse through verified campus vendors and explore their live digital menus instantly.</p>
+                    <div class="trending-grid">
+                        <div class="trending-card">
+                            <div class="trending-card-img"><ion-icon name="pizza-outline"></ion-icon></div>
+                            <h3 style="margin-bottom: 0.5rem;">Margherita Pizza</h3>
+                            <p class="text-secondary" style="margin-bottom: 1rem;">Oven-baked classic cheese pizza.</p>
+                            <div class="trending-price">₹120</div>
+                            <button class="btn btn-dark btn-block">Order Now</button>
+                        </div>
+                        <div class="trending-card">
+                            <div class="trending-card-img"><ion-icon name="cafe-outline"></ion-icon></div>
+                            <h3 style="margin-bottom: 0.5rem;">Cold Coffee</h3>
+                            <p class="text-secondary" style="margin-bottom: 1rem;">Thick blended coffee with ice cream.</p>
+                            <div class="trending-price">₹80</div>
+                            <button class="btn btn-dark btn-block">Order Now</button>
+                        </div>
+                        <div class="trending-card">
+                            <div class="trending-card-img"><ion-icon name="fast-food-outline"></ion-icon></div>
+                            <h3 style="margin-bottom: 0.5rem;">Spicy Chicken Roll</h3>
+                            <p class="text-secondary" style="margin-bottom: 1rem;">Flaky paratha loaded with juicy chicken.</p>
+                            <div class="trending-price">₹140</div>
+                            <button class="btn btn-dark btn-block">Order Now</button>
+                        </div>
+                        <div class="trending-card">
+                            <div class="trending-card-img"><ion-icon name="ice-cream-outline"></ion-icon></div>
+                            <h3 style="margin-bottom: 0.5rem;">Mango Thickshake</h3>
+                            <p class="text-secondary" style="margin-bottom: 1rem;">Fresh mango pulp with milk and cream.</p>
+                            <div class="trending-price">₹90</div>
+                            <button class="btn btn-dark btn-block">Order Now</button>
+                        </div>
                     </div>
-                    <div class="glass-panel step-card step-2">
-                        <div class="step-num">2</div>
-                        <h3>Place Your Order</h3>
-                        <p>Customize your meal exactly how you like it, add it to your cart, and checkout seamlessly.</p>
-                    </div>
-                    <div class="glass-panel step-card step-3">
-                        <div class="step-num">3</div>
-                        <h3>Track &amp; Enjoy</h3>
-                        <p>Watch real-time status updates via WebSockets as the vendor prepares your food live.</p>
-                    </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- Popular Vendors -->
-            <section id="dynamicContent" class="section">
-                <div class="section-head">
-                    <div>
-                        <h2 class="section-title">Popular Vendors</h2>
-                        <p class="section-sub">Discover what's cooking on campus today.</p>
+                <!-- Popular Vendors (Horizontal Scroll) -->
+                <section id="dynamicContent" class="section">
+                    <div class="section-head">
+                        <div>
+                            <h2 class="section-title">Featured Stalls</h2>
+                            <p class="section-sub">Top rated places to eat across campus.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="vendor-grid" id="vendorList">
-                    <!-- Loaded via JS -->
-                </div>
-            </section>
+                    <div class="horizontal-scroll-container" id="vendorList">
+                        <!-- Loaded via JS -->
+                    </div>
+                </section>
+
+                <!-- How it works (Timeline) -->
+                <section class="section">
+                    <div class="section-head" style="justify-content: center; text-align: center;">
+                        <div>
+                            <h2 class="section-title">How It Works</h2>
+                            <p class="section-sub">Three simple steps to satisfy your cravings.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-container">
+                        <div class="timeline-step">
+                            <div class="timeline-icon">1</div>
+                            <div class="timeline-content">
+                                <h3>Pick a Vendor</h3>
+                                <p class="text-secondary">Browse through verified campus vendors and explore their live digital menus instantly.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-icon">2</div>
+                            <div class="timeline-content">
+                                <h3>Place Your Order</h3>
+                                <p class="text-secondary">Customize your meal exactly how you like it, add it to your cart, and checkout seamlessly.</p>
+                            </div>
+                        </div>
+                        <div class="timeline-step">
+                            <div class="timeline-icon">3</div>
+                            <div class="timeline-content">
+                                <h3>Track & Enjoy</h3>
+                                <p class="text-secondary">Watch real-time status updates as the vendor prepares your food live.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Final CTA -->
+                <section class="final-cta">
+                    <h2>Ready to skip the line?</h2>
+                    <a href="#dynamicContent" class="btn btn-outline btn-lg" style="text-decoration: none; display: inline-block;">Explore Campus Menus</a>
+                </section>
+
+            </div>
         </main>
 
         <!-- Footer -->

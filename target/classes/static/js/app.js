@@ -176,10 +176,11 @@ function renderVendors(vendors) {
     if (!vendorList) return;
 
     vendorList.innerHTML = vendors.map(vendor => `
-        <div class="vendor-card" onclick="viewVendor('${vendor.id}')">
-            <div class="vendor-img-placeholder">
-                <ion-icon name="restaurant"></ion-icon>
-            </div>
+        <div class="horizontal-scroll-item">
+            <div class="vendor-card" onclick="viewVendor('${vendor.id}')">
+                <div class="vendor-img-placeholder">
+                    <ion-icon name="restaurant"></ion-icon>
+                </div>
             <div class="vendor-info">
                 <h3>${escapeHtml(vendor.name)}</h3>
                 <p class="vendor-desc">${escapeHtml(vendor.description || 'Delicious campus food')}</p>
