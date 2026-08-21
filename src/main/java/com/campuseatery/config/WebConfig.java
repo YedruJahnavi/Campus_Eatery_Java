@@ -16,8 +16,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("forward:/index.html");
-        registry.addViewController("/admin").setViewName("forward:/admin.html");
-        registry.addViewController("/dashboard").setViewName("forward:/dashboard.html");
+        // Forward all non-API and non-static requests to index.html for React Router
+        registry.addViewController("/{spring:\\w+}")
+                .setViewName("forward:/index.html");
+        registry.addViewController("/**/{spring:\\w+}")
+                .setViewName("forward:/index.html");
+        registry.addViewController("/{spring:\\w+}/**{spring:?!(\\.js|\\.css|\\.svg|\\.png)$}")
+                .setViewName("forward:/index.html");
     }
 }
