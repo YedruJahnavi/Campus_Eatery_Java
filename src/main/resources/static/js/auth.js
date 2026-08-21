@@ -29,8 +29,9 @@ async function initializeAuth() {
             if (navLinks) {
                 navLinks.appendChild(authContainer);
 
-                // Unconditionally inject Admin Panel link
-                if (!document.getElementById('navAdminLink')) {
+                // Unconditionally inject Admin Panel link, but hide it from the public home page
+                const isHomePage = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname === '';
+                if (!isHomePage && !document.getElementById('navAdminLink')) {
                     const adminLink = document.createElement('a');
                     adminLink.id = 'navAdminLink';
                     adminLink.href = 'admin.html';
