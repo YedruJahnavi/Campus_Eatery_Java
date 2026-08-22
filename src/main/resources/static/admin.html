@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Eatery | Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body style="background-color: var(--gray-50);">
+
+    <nav class="navbar" style="background-color: var(--black); color: var(--white);">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo">
+                <a href="/index.html"><img src="/images/logo.png" alt="Campus Eatery" style="height: 40px; display: block;"></a>
+            </div>
+            <div style="font-weight: 600; color: var(--error);">Admin Console</div>
+            <div class="nav-links">
+                <div id="user-button" style="display: none;"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 3rem 2rem; max-width: 1200px; margin: 0 auto;">
+        
+        <!-- Key Metrics -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+            <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); text-align: center;">
+                <h4 style="color: var(--text-muted); margin-bottom: 0.5rem;">Total Users</h4>
+                <p id="stat-users" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">--</p>
+            </div>
+            <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); text-align: center;">
+                <h4 style="color: var(--text-muted); margin-bottom: 0.5rem;">Active Vendors</h4>
+                <p id="stat-vendors" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">--</p>
+            </div>
+            <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); text-align: center;">
+                <h4 style="color: var(--text-muted); margin-bottom: 0.5rem;">Orders Today</h4>
+                <p id="stat-orders" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">--</p>
+            </div>
+            <div style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); text-align: center;">
+                <h4 style="color: var(--text-muted); margin-bottom: 0.5rem;">Total Revenue</h4>
+                <p id="stat-revenue" style="font-size: 2.5rem; font-weight: 800; color: var(--success);">₹--</p>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            
+            <!-- Vendor Approvals -->
+            <div style="background: var(--surface); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">🏪 Pending Vendor Applications</h3>
+                <div id="vendor-requests-container">
+                    <p style="color: var(--text-muted);">Loading requests...</p>
+                </div>
+            </div>
+            
+            <!-- User Management -->
+            <div style="background: var(--surface); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+                <h3 style="margin-bottom: 1.5rem; font-size: 1.5rem; border-bottom: 2px solid var(--gray-200); padding-bottom: 0.5rem;">👥 User Management</h3>
+                <div id="users-container" style="max-height: 400px; overflow-y: auto;">
+                    <p style="color: var(--text-muted);">Loading users...</p>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkSession = setInterval(async () => {
+                if (window.Clerk && window.Clerk.isReady) {
+                    clearInterval(checkSession);
+                    if (window.Clerk.user) {
+                        loadAdminDashboard();
+                    } else {
+                        window.location.href = '/index.html?login=true';
+                    }
+                }
+            }, 100);
+        });
+
+        async function loadAdminDashboard() {
+            try {
+                await Promise.all([
+                    loadStats(),
+                    loadVendorRequests(),
+                    loadUsers()
+                ]);
+            } catch (err) {
+                if (err.message.includes('403')) {
+                    document.body.innerHTML = '<div style="text-align:center; padding:5rem;"><h2>Access Denied</h2><p>You do not have administrative privileges.</p><a href="/">Go Home</a></div>';
+                }
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const stats = await window.api.getAdminStats();
+                document.getElementById('stat-users').innerText = stats.totalUsers || 0;
+                document.getElementById('stat-vendors').innerText = stats.activeVendors || 0;
+                document.getElementById('stat-orders').innerText = stats.ordersToday || 0;
+                document.getElementById('stat-revenue').innerText = '₹' + (stats.totalRevenue || 0).toFixed(2);
+            } catch (e) {
+                console.error("Failed to load stats", e);
+            }
+        }
+
+        async function loadVendorRequests() {
+            const container = document.getElementById('vendor-requests-container');
+            try {
+                const vendors = await window.api.getVendorRequests();
+                if (!vendors || vendors.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">No pending applications.</p>';
+                    return;
+                }
+                
+                let html = '<div style="display: flex; flex-direction: column; gap: 1rem;">';
+                vendors.forEach(vendor => {
+                    html += `
+                        <div style="border: 1px solid var(--border); padding: 1.5rem; border-radius: var(--radius-md); background: var(--gray-50);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <strong>${vendor.name || 'Unnamed Vendor'}</strong>
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">ID: ${vendor.id.substring(0,8)}</span>
+                            </div>
+                            <p style="font-size: 0.9rem; margin-bottom: 1rem;">Location: ${vendor.collegeLocation || 'N/A'}</p>
+                            <button onclick="approveVendor('${vendor.id}')" class="btn-primary" style="width: 100%; padding: 0.5rem;">Approve</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = `<p style="color: var(--error);">Error: ${err.message}</p>`;
+            }
+        }
+
+        async function loadUsers() {
+            const container = document.getElementById('users-container');
+            try {
+                const users = await window.api.getAdminUsers();
+                if (!users || users.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">No users found.</p>';
+                    return;
+                }
+                
+                let html = '<table style="width: 100%; border-collapse: collapse;">';
+                html += `
+                    <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+                        <th style="padding: 0.5rem;">User</th>
+                        <th style="padding: 0.5rem;">Role</th>
+                        <th style="padding: 0.5rem;">Status</th>
+                        <th style="padding: 0.5rem;">Action</th>
+                    </tr>
+                `;
+                users.forEach(user => {
+                    const isActive = user.isActive !== false;
+                    const role = user.role || 'STUDENT';
+                    html += `
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.75rem 0.5rem;">
+                                <div style="font-weight: 600;">${user.fullName || 'Anonymous'}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">${user.email || 'No email'}</div>
+                            </td>
+                            <td style="padding: 0.75rem 0.5rem; font-size: 0.85rem;">${role}</td>
+                            <td style="padding: 0.75rem 0.5rem;">
+                                <span style="background: ${isActive ? 'var(--success)' : 'var(--error)'}; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;">
+                                    ${isActive ? 'Active' : 'Suspended'}
+                                </span>
+                            </td>
+                            <td style="padding: 0.75rem 0.5rem;">
+                                <button onclick="toggleUserStatus('${user.id}', ${!isActive})" style="background: none; border: 1px solid var(--border); padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">
+                                    ${isActive ? 'Suspend' : 'Activate'}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                html += '</table>';
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = `<p style="color: var(--error);">Error: ${err.message}</p>`;
+            }
+        }
+
+        async function approveVendor(vendorId) {
+            try {
+                // Implementation for window.api.approveVendor should be in api.js
+                const response = await fetchWithAuth(`/admin/approve-vendor/${vendorId}`, { method: 'POST' });
+                alert("Vendor Approved!");
+                loadVendorRequests();
+            } catch (err) {
+                alert(`Failed to approve: ${err.message}`);
+            }
+        }
+
+        async function toggleUserStatus(userId, newStatus) {
+            try {
+                await window.api.updateUserStatus(userId, newStatus);
+                loadUsers();
+            } catch (err) {
+                alert(`Failed to update status: ${err.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

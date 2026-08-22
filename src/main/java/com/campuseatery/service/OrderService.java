@@ -152,4 +152,37 @@ public class OrderService {
         }
         return normalized;
     }
+
+    public List<Order> getAvailableDeliveries() {
+        return orderRepository.findByStatus("READY_FOR_PICKUP").stream()
+                .filter(order -> order.getRiderId() == null)
+                .collect(Collectors.toList());
+    }
+
+    public List<Order> getMyDeliveries(String riderId) {
+        return orderRepository.findByRiderId(riderId);
+    }
+
+    public Order acceptDelivery(String orderId, String riderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        if (order.getRiderId() != null && !order.getRiderId().equals(riderId)) {
+            throw new IllegalArgumentException("Order already assigned to another rider");
+        }
+        order.setRiderId(riderId);
+        return orderRepository.save(order);
+    }
+
+    public Order completeDelivery(String orderId, String riderId, String deliveryCode) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        if (!riderId.equals(order.getRiderId())) {
+            throw new IllegalArgumentException("Not your assigned delivery");
+        }
+        if (deliveryCode == null || !deliveryCode.equals(order.getDeliveryCode())) {
+            throw new IllegalArgumentException("Invalid delivery code");
+        }
+        order.setStatus("DELIVERED"); // or COMPLETED based on your flow
+        Order updatedOrder = orderRepository.save(order);
+        simpMessagingTemplate.convertAndSend("/topic/user_" + order.getStudentId(), updatedOrder);
+        return updatedOrder;
+    }
 }

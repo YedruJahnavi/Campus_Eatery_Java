@@ -23,9 +23,21 @@
     <main>
         <section class="hero">
             <div class="container animate-fade-in delay-1">
-                <h1>Elevate your campus<br>dining experience.</h1>
-                <p>Skip the dining hall line. Order hot meals, snacks, and artisan coffee from premium campus micro-kitchens and local stalls.</p>
-                <a href="/vendors.html" class="btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">Explore Menus &rarr;</a>
+                <h1 style="font-size: 3.5rem; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 1.5rem; line-height: 1.1;">Good evening 👋<br>What are you craving today?</h1>
+                
+                <div class="search-bar-container" style="max-width: 600px; margin: 0 auto 2.5rem auto; position: relative;">
+                    <input type="text" id="food-search" placeholder="Search for food, vendors, or categories..." style="width: 100%; padding: 1.25rem 1.5rem; border-radius: var(--radius-full); border: 1px solid var(--border); font-size: 1.1rem; box-shadow: var(--shadow-md); outline: none;">
+                    <button style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--primary); color: white; border: none; border-radius: var(--radius-full); padding: 0.75rem 1.5rem; cursor: pointer; font-weight: 600; font-size: 1rem; transition: background 0.2s;">Search</button>
+                </div>
+                
+                <div class="categories" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <a href="/vendors.html?category=breakfast" class="category-chip" style="background: var(--surface); border: 1px solid var(--border); padding: 0.6rem 1.25rem; border-radius: var(--radius-full); font-weight: 500; transition: all 0.2s; box-shadow: var(--shadow-sm);">Breakfast</a>
+                    <a href="/vendors.html?category=meals" class="category-chip" style="background: var(--surface); border: 1px solid var(--border); padding: 0.6rem 1.25rem; border-radius: var(--radius-full); font-weight: 500; transition: all 0.2s; box-shadow: var(--shadow-sm);">Meals</a>
+                    <a href="/vendors.html?category=snacks" class="category-chip" style="background: var(--surface); border: 1px solid var(--border); padding: 0.6rem 1.25rem; border-radius: var(--radius-full); font-weight: 500; transition: all 0.2s; box-shadow: var(--shadow-sm);">Snacks</a>
+                    <a href="/vendors.html?category=drinks" class="category-chip" style="background: var(--surface); border: 1px solid var(--border); padding: 0.6rem 1.25rem; border-radius: var(--radius-full); font-weight: 500; transition: all 0.2s; box-shadow: var(--shadow-sm);">Drinks</a>
+                    <a href="/vendors.html?category=desserts" class="category-chip" style="background: var(--surface); border: 1px solid var(--border); padding: 0.6rem 1.25rem; border-radius: var(--radius-full); font-weight: 500; transition: all 0.2s; box-shadow: var(--shadow-sm);">Desserts</a>
+                    <a href="/vendors.html?category=fastfood" class="category-chip" style="background: var(--surface); border: 1px solid var(--border); padding: 0.6rem 1.25rem; border-radius: var(--radius-full); font-weight: 500; transition: all 0.2s; box-shadow: var(--shadow-sm);">Fast Food</a>
+                </div>
             </div>
         </section>
 
@@ -62,46 +74,19 @@
                     <a href="/vendors.html" style="font-weight: 500; border-bottom: 1px solid var(--black); padding-bottom: 2px;">View all</a>
                 </div>
                 
-                <div class="eateries-grid">
-                    <a href="#stall-1" class="eatery-card animate-fade-in delay-1">
-                        <div class="eatery-img" style="background: linear-gradient(135deg, #e5e5e5, #d4d4d4);">
-                            <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">TB</span>
-                        </div>
-                        <div class="eatery-content">
-                            <h3>The Bite Corner</h3>
-                            <p>Gourmet Burgers • 15 min</p>
-                        </div>
-                    </a>
-                    
-                    <a href="#stall-2" class="eatery-card animate-fade-in delay-2">
-                        <div class="eatery-img" style="background: linear-gradient(135deg, #f5f5f5, #e5e5e5);">
-                            <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">GB</span>
-                        </div>
-                        <div class="eatery-content">
-                            <h3>Green Bowl</h3>
-                            <p>Organic / Vegan • 20 min</p>
-                        </div>
-                    </a>
-                    
-                    <a href="#stall-3" class="eatery-card animate-fade-in delay-3">
-                        <div class="eatery-img" style="background: linear-gradient(135deg, #d4d4d4, #a3a3a3);">
-                            <span style="font-weight: bold; font-size: 2rem; color: #737373;">MM</span>
-                        </div>
-                        <div class="eatery-content">
-                            <h3>Midnight Mocha</h3>
-                            <p>Artisan Coffee • 10 min</p>
-                        </div>
-                    </a>
-                    
-                    <a href="#stall-4" class="eatery-card animate-fade-in delay-4">
-                        <div class="eatery-img" style="background: linear-gradient(135deg, #e5e5e5, #d4d4d4);">
-                            <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">NT</span>
-                        </div>
-                        <div class="eatery-content">
-                            <h3>Neon Tacos</h3>
-                            <p>Authentic Mexican • 25 min</p>
-                        </div>
-                    </a>
+                <div class="eateries-grid" id="trending-vendors-grid">
+                    <p style="color: var(--gray-500);">Loading eateries...</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="popular-food" style="padding: 6rem 0; background: var(--gray-50);">
+            <div class="container">
+                <div class="section-header animate-fade-in delay-1" style="text-align: left; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <h2 style="margin-bottom: 0;">Popular on Campus</h2>
+                </div>
+                <div class="eateries-grid" id="popular-food-grid">
+                    <p style="color: var(--gray-500);">Loading popular food...</p>
                 </div>
             </div>
         </section>
@@ -114,6 +99,79 @@
         </div>
     </footer>
 
+    <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const loadVendors = async () => {
+                try {
+                    const grid = document.getElementById('trending-vendors-grid');
+                    const vendors = await window.api.getVendors();
+                    
+                    if (!vendors || vendors.length === 0) {
+                        grid.innerHTML = '<p>No eateries available right now.</p>';
+                        return;
+                    }
+                    
+                    grid.innerHTML = vendors.slice(0, 4).map((vendor, index) => `
+                        <a href="/menu.html?vendorId=${vendor.id}" class="eatery-card animate-fade-in delay-${(index % 4) + 1}">
+                            <div class="eatery-img" style="background: linear-gradient(135deg, #e5e5e5, #d4d4d4);">
+                                <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">${vendor.name ? vendor.name.substring(0, 2).toUpperCase() : 'CE'}</span>
+                            </div>
+                            <div class="eatery-content">
+                                <h3>${vendor.name}</h3>
+                                <p>${vendor.description || 'Premium Campus Food'}</p>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                                    <span style="font-size: 0.8rem; background: var(--gray-200); padding: 0.2rem 0.5rem; border-radius: 4px;">★ ${vendor.rating ? vendor.rating.toFixed(1) : '4.5'}</span>
+                                    <span style="font-size: 0.8rem; background: var(--success); color: white; padding: 0.2rem 0.5rem; border-radius: 4px;">Open Now</span>
+                                </div>
+                            </div>
+                        </a>
+                    `).join('');
+                } catch (err) {
+                    document.getElementById('trending-vendors-grid').innerHTML = '<p style="color: red;">Failed to load eateries.</p>';
+                }
+            };
+            
+            const loadRecommendations = async () => {
+                try {
+                    const grid = document.getElementById('popular-food-grid');
+                    const recommendations = await window.api.getRecommendations();
+                    
+                    if (!recommendations || recommendations.length === 0) {
+                        grid.innerHTML = '<p>No recommendations available right now.</p>';
+                        return;
+                    }
+                    
+                    grid.innerHTML = recommendations.slice(0, 4).map((item, index) => {
+                        const price = item.price ? (item.price / 100).toFixed(2) : '0.00';
+                        return `
+                        <div class="eatery-card animate-fade-in delay-${(index % 4) + 1}" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; background: var(--surface);">
+                            <div>
+                                <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">${item.name}</h3>
+                                <p style="color: var(--gray-500); font-size: 0.9rem; margin-bottom: 1rem;">Popular pick</p>
+                                <span style="font-weight: 600;">₹${price}</span>
+                            </div>
+                            <button onclick="window.location.href='/vendors.html'" class="btn-primary" style="margin-top: 1rem; width: 100%; text-align: center;">View Menu</button>
+                        </div>
+                        `;
+                    }).join('');
+                } catch (err) {
+                    document.getElementById('popular-food-grid').innerHTML = '<p style="color: red;">Failed to load popular food.</p>';
+                }
+            };
+
+            loadVendors();
+            
+            // Check if user is ready to load personalized recommendations
+            const checkSession = setInterval(() => {
+                if (window.Clerk && window.Clerk.isReady) {
+                    clearInterval(checkSession);
+                    loadRecommendations();
+                }
+            }, 100);
+            setTimeout(() => clearInterval(checkSession), 5000); // Stop checking after 5s
+        });
+    </script>
 </body>
 </html>

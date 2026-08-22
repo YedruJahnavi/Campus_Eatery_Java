@@ -50,19 +50,48 @@
         </div>
     </nav>
 
-    <main class="container" style="padding: 4rem 2rem;">
-        <div id="vendor-header" style="margin-bottom: 3rem;">
-            <a href="/vendors.html" style="color: var(--gray-500); margin-bottom: 1rem; display: inline-block;">&larr; Back to Vendors</a>
-            <h1 id="vendor-name" style="font-size: 3rem; margin-bottom: 0.5rem;">Loading...</h1>
-            <p id="vendor-desc" style="color: var(--gray-500); font-size: 1.1rem; margin-bottom: 1rem;"></p>
-            <div id="vendor-reviews" style="display: flex; gap: 0.5rem; align-items: center;">
-                <span style="background: var(--black); color: var(--white); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; font-size: 0.9rem;">⭐ <span id="vendor-rating">--</span></span>
-                <span style="color: var(--gray-500); font-size: 0.9rem;" id="vendor-review-count">(0 reviews)</span>
+    <main>
+        <!-- Vendor Cover & Info -->
+        <div id="vendor-cover" style="height: 250px; background: linear-gradient(135deg, var(--gray-200), var(--gray-300)); position: relative;">
+            <div class="container" style="position: absolute; bottom: -40px; left: 0; right: 0; display: flex; gap: 1.5rem; align-items: flex-end;">
+                <div id="vendor-logo" style="width: 120px; height: 120px; border-radius: var(--radius-lg); background: var(--surface); border: 4px solid var(--surface); box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold; color: var(--primary);">V</div>
             </div>
         </div>
         
-        <div id="menu-grid" style="display: grid; gap: 1.5rem;">
-            <p style="color: var(--gray-500);">Loading menu items...</p>
+        <div class="container" style="padding-top: 5rem; padding-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                <div>
+                    <h1 id="vendor-name" style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Loading...</h1>
+                    <p id="vendor-desc" style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 1rem;"></p>
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <span style="background: var(--success); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radius-full); font-weight: 600; font-size: 0.9rem;">Open Now</span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">📍 <span id="vendor-location">Campus</span></span>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;">⏱️ 15-20 min</span>
+                        <div id="vendor-reviews" style="display: flex; gap: 0.5rem; align-items: center;">
+                            <span style="background: var(--text-main); color: var(--white); padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: bold; font-size: 0.85rem;">⭐ <span id="vendor-rating">--</span></span>
+                            <span style="color: var(--text-muted); font-size: 0.85rem;" id="vendor-review-count">(0 reviews)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 200px 1fr; gap: 3rem;">
+                <!-- Categories Sidebar -->
+                <aside style="position: sticky; top: 100px; height: fit-content;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Menu</h3>
+                    <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="#recommended" style="padding: 0.5rem 1rem; border-left: 3px solid var(--primary); font-weight: 600; color: var(--primary);">Recommended</a>
+                        <a href="#meals" style="padding: 0.5rem 1rem; border-left: 3px solid transparent; color: var(--text-muted);">Meals</a>
+                        <a href="#snacks" style="padding: 0.5rem 1rem; border-left: 3px solid transparent; color: var(--text-muted);">Snacks</a>
+                        <a href="#drinks" style="padding: 0.5rem 1rem; border-left: 3px solid transparent; color: var(--text-muted);">Drinks</a>
+                    </nav>
+                </aside>
+                
+                <!-- Menu Grid -->
+                <div id="menu-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <p style="color: var(--text-muted);">Loading menu items...</p>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -116,6 +145,8 @@
                 
                 document.getElementById('vendor-name').innerText = vendor.name || 'Vendor Menu';
                 document.getElementById('vendor-desc').innerText = vendor.description || '';
+                document.getElementById('vendor-location').innerText = vendor.collegeLocation || 'Campus Area';
+                document.getElementById('vendor-logo').innerText = vendor.name ? vendor.name.substring(0, 1).toUpperCase() : 'V';
 
                 // Load reviews concurrently
                 loadReviews(vendorId);

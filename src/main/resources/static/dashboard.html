@@ -18,19 +18,50 @@
         </div>
     </nav>
 
-    <main class="container" style="padding: 4rem 2rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <h1 style="font-size: 2.5rem;">Your Dashboard</h1>
-            <a href="/vendors.html" class="btn-primary">Order Food</a>
-        </div>
-        
-        <div class="glass-card" style="border: 1px solid var(--gray-200); padding: 2rem; border-radius: 12px; background: var(--gray-100);">
-            <h3 style="margin-bottom: 1rem;">Live Order Tracking</h3>
-            <div id="orders-container">
-                <p style="color: var(--gray-500);">Loading your orders...</p>
+    <main class="container" style="padding: 3rem 2rem; display: grid; grid-template-columns: 250px 1fr; gap: 2rem; min-height: calc(100vh - 80px);">
+        <!-- Sidebar Navigation -->
+        <aside style="background: var(--surface); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); height: fit-content;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; margin: 0 auto 1rem auto;">S</div>
+                <h2 id="profile-name" style="font-size: 1.25rem;">Student</h2>
+                <p id="profile-email" style="color: var(--text-muted); font-size: 0.9rem;">student@university.edu</p>
+            </div>
+            
+            <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="#orders" class="sidebar-link active" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 500; display: block; transition: all 0.2s; background: var(--gray-100); color: var(--primary);">📦 Order History</a>
+                <a href="#profile" class="sidebar-link" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 500; display: block; transition: all 0.2s; color: var(--text-main);">👤 Profile Details</a>
+                <a href="#locations" class="sidebar-link" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 500; display: block; transition: all 0.2s; color: var(--text-main);">📍 Saved Locations</a>
+                <a href="#settings" class="sidebar-link" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 500; display: block; transition: all 0.2s; color: var(--text-main);">⚙️ Preferences</a>
+                <a href="#" onclick="window.Clerk.signOut()" class="sidebar-link" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 500; display: block; transition: all 0.2s; color: var(--error); margin-top: 1rem;">🚪 Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 2rem; font-weight: 700;">My Orders</h1>
+                <a href="/vendors.html" class="btn-primary">Order Food</a>
+            </div>
+            
+            <div class="glass-card" style="border: 1px solid var(--border); padding: 2rem; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-sm);">
+                <div id="orders-container">
+                    <p style="color: var(--text-muted);">Loading your orders...</p>
+                </div>
             </div>
         </div>
     </main>
+
+    <style>
+        .sidebar-link:hover:not(.active) {
+            background: var(--gray-50);
+        }
+        @media (max-width: 768px) {
+            main.container {
+                grid-template-columns: 1fr;
+                padding: 1.5rem 1rem 6rem 1rem;
+            }
+        }
+    </style>
 
     <!-- Review Modal -->
     <div id="review-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
@@ -80,6 +111,9 @@
                 if (window.Clerk && window.Clerk.isReady) {
                     clearInterval(checkSession);
                     if (window.Clerk.user) {
+                        document.getElementById('profile-name').innerText = window.Clerk.user.fullName || 'Student';
+                        document.getElementById('profile-email').innerText = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
+                        
                         loadOrders();
                         // Real-time polling every 10 seconds
                         pollInterval = setInterval(loadOrders, 10000);

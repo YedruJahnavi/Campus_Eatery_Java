@@ -88,5 +88,23 @@ window.api = {
 
     // Public APIs
     getVendors: (search = '') => fetchPublic(search ? `/vendors?search=${encodeURIComponent(search)}` : '/vendors'),
-    getVendorById: (id) => fetchPublic(`/vendors/${id}`)
+    getVendorById: (id) => fetchPublic(`/vendors/${id}`),
+    getRecommendations: () => fetchPublic('/vendors/recommendations'),
+
+    // Delivery APIs
+    getAvailableDeliveries: () => fetchWithAuth('/delivery/available'),
+    getMyDeliveries: () => fetchWithAuth('/delivery/my-deliveries'),
+    acceptDelivery: (orderId) => fetchWithAuth(`/delivery/${orderId}/accept`, { method: 'POST' }),
+    completeDelivery: (orderId, deliveryCode) => fetchWithAuth(`/delivery/${orderId}/complete`, {
+        method: 'POST',
+        body: JSON.stringify({ deliveryCode })
+    }),
+
+    // Admin APIs
+    getAdminStats: () => fetchWithAuth('/admin/stats'),
+    getAdminUsers: () => fetchWithAuth('/admin/users'),
+    updateUserStatus: (userId, isActive) => fetchWithAuth(`/admin/users/${userId}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({ isActive })
+    })
 };

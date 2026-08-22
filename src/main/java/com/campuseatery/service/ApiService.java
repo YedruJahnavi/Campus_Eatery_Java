@@ -62,6 +62,7 @@ public class ApiService {
         return recommendations;
     }
 
+    @org.springframework.cache.annotation.Cacheable(value = "vendors", key = "#search == null ? 'all' : #search")
     public List<Map<String, Object>> getVendors(String search) {
         List<Stall> stalls = stallRepository.findByIsActiveTrue();
 
@@ -92,6 +93,7 @@ public class ApiService {
         }).collect(Collectors.toList());
     }
 
+    @org.springframework.cache.annotation.Cacheable(value = "vendor_details", key = "#id")
     public Map<String, Object> getVendorById(String id) {
         Stall stall = stallRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Stall not found"));
         

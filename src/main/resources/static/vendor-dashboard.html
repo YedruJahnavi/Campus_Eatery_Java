@@ -72,43 +72,77 @@
                 const orders = await window.api.getVendorOrders();
                 
                 if (orders.length === 0) {
-                    container.innerHTML = '<p style="color: var(--gray-500);">No orders found for your stall.</p>';
+                    container.innerHTML = '<div style="text-align: center; padding: 4rem; background: var(--white); border-radius: var(--radius-lg);"><span style="font-size: 3rem;">😴</span><p style="color: var(--text-muted); margin-top: 1rem;">No orders yet. Waiting for hungry students...</p></div>';
                     return;
                 }
                 
-                let html = '';
-                orders.forEach(order => {
-                    const date = new Date(order.createdAt).toLocaleString();
-                    html += `
-                        <div class="order-card">
+                const pendingOrders = orders.filter(o => o.status === 'PENDING' || o.status === 'ACCEPTED');
+                const preparingOrders = orders.filter(o => o.status === 'PREPARING');
+                const readyOrders = orders.filter(o => o.status === 'READY_FOR_PICKUP');
+                
+                const renderCard = (order) => {
+                    const date = new Date(order.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    return `
+                        <div class="order-card" style="box-shadow: var(--shadow-sm);">
                             <div class="order-header">
                                 <div>
-                                    <strong style="display: block; font-size: 1.1rem;">Order #${order.id.substring(0, 8)}</strong>
-                                    <span style="font-size: 0.85rem; color: var(--gray-500);">${date}</span>
+                                    <strong style="display: block; font-size: 1.1rem;">#${order.id.substring(0, 5).toUpperCase()}</strong>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">${date}</span>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <span style="font-weight: bold;">₹${order.totalAmount.toFixed(2)}</span>
-                                    <select class="status-select" onchange="updateStatus('${order.id}', this.value)">
-                                        <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Pending</option>
-                                        <option value="ACCEPTED" ${order.status === 'ACCEPTED' ? 'selected' : ''}>Accepted</option>
-                                        <option value="PREPARING" ${order.status === 'PREPARING' ? 'selected' : ''}>Preparing</option>
-                                        <option value="READY_FOR_PICKUP" ${order.status === 'READY_FOR_PICKUP' ? 'selected' : ''}>Ready for Pickup</option>
-                                        <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
-                                        <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''}>Cancelled</option>
-                                    </select>
-                                </div>
+                                <span style="font-weight: bold; color: var(--primary);">₹${order.totalAmount.toFixed(2)}</span>
                             </div>
-                            <ul style="list-style: none; padding: 0;">
+                            <ul style="list-style: none; padding: 0; margin-bottom: 1rem;">
                                 ${order.items.map(item => `
-                                    <li style="display: flex; justify-content: space-between; padding: 0.25rem 0; color: var(--gray-600);">
-                                        <span>${item.quantity}x ${item.name}</span>
-                                        <span>₹${(item.price * item.quantity).toFixed(2)}</span>
+                                    <li style="display: flex; justify-content: space-between; padding: 0.25rem 0; color: var(--text-main); font-size: 0.95rem;">
+                                        <span><span style="font-weight: bold; margin-right: 0.5rem;">${item.quantity}x</span> ${item.name}</span>
                                     </li>
                                 `).join('')}
                             </ul>
+                            <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+                                <select class="status-select" style="width: 100%; padding: 0.75rem; border-radius: var(--radius-md);" onchange="updateStatus('${order.id}', this.value)">
+                                    <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+                                    <option value="ACCEPTED" ${order.status === 'ACCEPTED' ? 'selected' : ''}>Accepted</option>
+                                    <option value="PREPARING" ${order.status === 'PREPARING' ? 'selected' : ''}>Preparing</option>
+                                    <option value="READY_FOR_PICKUP" ${order.status === 'READY_FOR_PICKUP' ? 'selected' : ''}>Ready for Pickup</option>
+                                    <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                                    <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''}>Cancelled</option>
+                                </select>
+                            </div>
                         </div>
                     `;
-                });
+                };
+
+                let html = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                        <!-- Incoming Column -->
+                        <div style="background: var(--gray-50); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                            <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                                <span>📥 Incoming</span>
+                                <span style="background: var(--primary); color: white; border-radius: var(--radius-full); width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;">${pendingOrders.length}</span>
+                            </h3>
+                            ${pendingOrders.length ? pendingOrders.map(renderCard).join('') : '<p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">No incoming orders</p>'}
+                        </div>
+                        
+                        <!-- Preparing Column -->
+                        <div style="background: var(--gray-50); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                            <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                                <span>🍳 Preparing</span>
+                                <span style="background: var(--warning); color: white; border-radius: var(--radius-full); width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;">${preparingOrders.length}</span>
+                            </h3>
+                            ${preparingOrders.length ? preparingOrders.map(renderCard).join('') : '<p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">No orders in preparation</p>'}
+                        </div>
+                        
+                        <!-- Ready Column -->
+                        <div style="background: var(--gray-50); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                            <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+                                <span>🛍️ Ready</span>
+                                <span style="background: var(--success); color: white; border-radius: var(--radius-full); width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.9rem;">${readyOrders.length}</span>
+                            </h3>
+                            ${readyOrders.length ? readyOrders.map(renderCard).join('') : '<p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">No orders ready for pickup</p>'}
+                        </div>
+                    </div>
+                `;
+
                 
                 container.innerHTML = html;
             } catch (error) {
