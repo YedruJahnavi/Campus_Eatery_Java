@@ -1,16 +1,16 @@
 spring:
   data:
     mongodb:
-      uri: ${MONGO_URI:mongodb://localhost:27017/campus_eatery}
+      uri: ${MONGO_URI:mongodb+srv://ynpragnesh_db_user:gpBsLUlqWNyKVNlF@campuseatery.x0vsxti.mongodb.net/?appName=CampusEatery}
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${CLERK_ISSUER_URI}
+          issuer-uri: ${CLERK_ISSUER_URI:https://primary-mammal-33.clerk.accounts.dev}
 
 clerk:
-  publishable-key: ${CLERK_PUBLISHABLE_KEY}
-  frontend-api: ${CLERK_FRONTEND_API}
+  publishable-key: ${CLERK_PUBLISHABLE_KEY:pk_test_cHJpbWFyeS1tYW1tYWwtMzMuY2xlcmsuYWNjb3VudHMuZGV2JA}
+  frontend-api: ${CLERK_FRONTEND_API:primary-mammal-33.clerk.accounts.dev}
 
 server:
   port: ${PORT:8080}

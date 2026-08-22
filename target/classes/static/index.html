@@ -1,13 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Eatery</title>
-    <script type="module" crossorigin src="/assets/index-DUtqdq6R.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BuPvBH95.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Eatery | Elevate Your Campus Dining</title>
+    <meta name="description" content="Order hot meals, snacks, and artisan coffee from premium campus micro-kitchens and local stalls.">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo">CampusEatery.</div>
+            <div class="nav-links">
+                <a href="#login">Log in</a>
+                <a href="#signup" class="btn-primary">Sign up</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="container animate-fade-in delay-1">
+                <h1>Elevate your campus<br>dining experience.</h1>
+                <p>Skip the dining hall line. Order hot meals, snacks, and artisan coffee from premium campus micro-kitchens and local stalls.</p>
+                <a href="#explore" class="btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">Explore Menus &rarr;</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <div class="section-header animate-fade-in delay-2">
+                    <h2>Seamless ordering.</h2>
+                    <p style="color: var(--gray-400); margin-top: 0.5rem;">Experience food delivery designed for the modern student.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card animate-fade-in delay-2">
+                        <div class="feature-icon">1</div>
+                        <h3>Discover</h3>
+                        <p>Browse curated menus from exclusive campus stalls and student-run micro-kitchens.</p>
+                    </div>
+                    <div class="feature-card animate-fade-in delay-3">
+                        <div class="feature-icon">2</div>
+                        <h3>Indulge</h3>
+                        <p>Customize your order and pay securely with a single tap using your digital wallet.</p>
+                    </div>
+                    <div class="feature-card animate-fade-in delay-4">
+                        <div class="feature-icon">3</div>
+                        <h3>Receive</h3>
+                        <p>Track your delivery in real-time. Hot food arrives at your dorm in minutes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="eateries" id="explore">
+            <div class="container">
+                <div class="section-header animate-fade-in delay-1" style="text-align: left; display: flex; justify-content: space-between; align-items: flex-end;">
+                    <h2 style="margin-bottom: 0;">Trending Eateries</h2>
+                    <a href="#all" style="font-weight: 500; border-bottom: 1px solid var(--black); padding-bottom: 2px;">View all</a>
+                </div>
+                
+                <div class="eateries-grid">
+                    <a href="#stall-1" class="eatery-card animate-fade-in delay-1">
+                        <div class="eatery-img" style="background: linear-gradient(135deg, #e5e5e5, #d4d4d4);">
+                            <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">TB</span>
+                        </div>
+                        <div class="eatery-content">
+                            <h3>The Bite Corner</h3>
+                            <p>Gourmet Burgers • 15 min</p>
+                        </div>
+                    </a>
+                    
+                    <a href="#stall-2" class="eatery-card animate-fade-in delay-2">
+                        <div class="eatery-img" style="background: linear-gradient(135deg, #f5f5f5, #e5e5e5);">
+                            <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">GB</span>
+                        </div>
+                        <div class="eatery-content">
+                            <h3>Green Bowl</h3>
+                            <p>Organic / Vegan • 20 min</p>
+                        </div>
+                    </a>
+                    
+                    <a href="#stall-3" class="eatery-card animate-fade-in delay-3">
+                        <div class="eatery-img" style="background: linear-gradient(135deg, #d4d4d4, #a3a3a3);">
+                            <span style="font-weight: bold; font-size: 2rem; color: #737373;">MM</span>
+                        </div>
+                        <div class="eatery-content">
+                            <h3>Midnight Mocha</h3>
+                            <p>Artisan Coffee • 10 min</p>
+                        </div>
+                    </a>
+                    
+                    <a href="#stall-4" class="eatery-card animate-fade-in delay-4">
+                        <div class="eatery-img" style="background: linear-gradient(135deg, #e5e5e5, #d4d4d4);">
+                            <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">NT</span>
+                        </div>
+                        <div class="eatery-content">
+                            <h3>Neon Tacos</h3>
+                            <p>Authentic Mexican • 25 min</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Campus Eatery. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
 </html>
