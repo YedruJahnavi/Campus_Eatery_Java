@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @RestController
@@ -59,6 +62,20 @@ public class ApiController {
             return ResponseEntity.status(404).body(Map.of("detail", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("detail", "Internal server error"));
+        }
+    }
+
+    @GetMapping("/vendors/logs")
+    public ResponseEntity<String> getLogs() {
+        try {
+            java.nio.file.Path logPath = java.nio.file.Paths.get("logs/campus-eatery.log");
+            if (java.nio.file.Files.exists(logPath)) {
+                String logs = new String(java.nio.file.Files.readAllBytes(logPath));
+                return ResponseEntity.ok(logs);
+            }
+            return ResponseEntity.ok("Log file not found");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error reading logs: " + e.getMessage());
         }
     }
 }
