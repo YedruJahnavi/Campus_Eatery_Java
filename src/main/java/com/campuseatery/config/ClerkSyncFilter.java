@@ -48,12 +48,17 @@ public class ClerkSyncFilter extends OncePerRequestFilter {
                     user = new User();
                     user.setId(clerkId);
                     
-                    // Clerk sometimes puts email inside primaryEmailAddress or just email claim
                     String email = null;
-                    if (jwt.hasClaim("email")) {
-                        email = jwt.getClaimAsString("email");
-                    } else if (jwt.hasClaim("primaryEmailAddress")) {
-                        email = jwt.getClaimAsString("primaryEmailAddress");
+                    try {
+                        if (jwt.hasClaim("email")) {
+                            Object claim = jwt.getClaim("email");
+                            email = claim != null ? claim.toString() : null;
+                        } else if (jwt.hasClaim("primaryEmailAddress")) {
+                            Object claim = jwt.getClaim("primaryEmailAddress");
+                            email = claim != null ? claim.toString() : null;
+                        }
+                    } catch (Exception e) {
+                        // Ignore parse errors
                     }
                     if (email == null) {
                         email = clerkId + "@clerk.placeholder.com";
@@ -62,12 +67,19 @@ public class ClerkSyncFilter extends OncePerRequestFilter {
                     user.setEmail(email);
                     
                     String role = "customer";
-                    Map<String, Object> metadata = jwt.getClaimAsMap("publicMetadata");
-                    if (metadata == null) {
-                        metadata = jwt.getClaimAsMap("public_metadata");
+                    Map<String, Object> metadata = null;
+                    try {
+                        Object metaObj = jwt.getClaim("publicMetadata");
+                        if (metaObj == null) metaObj = jwt.getClaim("public_metadata");
+                        if (metaObj instanceof Map) {
+                            metadata = (Map<String, Object>) metaObj;
+                        }
+                    } catch (Exception e) {
+                        // Ignore parse errors
                     }
+                    
                     if (metadata != null && metadata.containsKey("role")) {
-                        role = (String) metadata.get("role");
+                        role = metadata.get("role").toString();
                     } else if (email != null && email.toLowerCase().contains("admin")) {
                         role = "admin";
                     } else if (email != null && email.toLowerCase().contains("vendor")) {
@@ -78,7 +90,12 @@ public class ClerkSyncFilter extends OncePerRequestFilter {
                         user.setApprovalStatus("approved");
                     }
                     
-                    userRepository.save(user);
+                    try {
+                        userRepository.save(user);
+                    } catch (Exception e) {
+                        // Log and continue if save fails (e.g. duplicate key)
+                        System.err.println("Failed to save new user in ClerkSyncFilter: " + e.getMessage());
+                    }
                 }
                 syncedUsers.put(clerkId, true);
             }
