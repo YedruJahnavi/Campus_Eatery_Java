@@ -58,7 +58,13 @@ async function fetchPublic(endpoint, options = {}) {
 window.api = {
     // Orders
     getStudentOrders: () => fetchWithAuth('/orders'),
-    checkout: () => fetchWithAuth('/orders/checkout', { method: 'POST' }),
+    
+    // Payments
+    createRazorpayOrder: () => fetchWithAuth('/create-order', { method: 'POST' }),
+    verifyRazorpayPayment: (payload) => fetchWithAuth('/verify-payment', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+    }),
     
     // Vendor APIs
     getVendorOrders: () => fetchWithAuth('/orders/vendor'),

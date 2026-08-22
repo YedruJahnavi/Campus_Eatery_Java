@@ -55,6 +55,7 @@
         </div>
     </main>
 
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script>
@@ -76,9 +77,53 @@
                     const btn = document.getElementById('checkout-btn');
                     btn.disabled = true;
                     btn.innerText = 'Processing...';
-                    await window.api.checkout();
-                    alert('Order placed successfully!');
-                    window.location.href = '/dashboard.html';
+                    
+                    // 1. Call backend to create Razorpay order
+                    const orderData = await window.api.createRazorpayOrder();
+                    
+                    // 2. Open Razorpay modal
+                    const options = {
+                        "key": orderData.key,
+                        "amount": orderData.amount,
+                        "currency": orderData.currency,
+                        "name": "Campus Eatery",
+                        "description": "Food Order Checkout",
+                        "order_id": orderData.order_id,
+                        "handler": async function (response) {
+                            try {
+                                // 3. Verify payment signature on backend
+                                await window.api.verifyRazorpayPayment({
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    local_order_id: orderData.local_order_id
+                                });
+                                alert('Payment successful! Order placed.');
+                                window.location.href = '/dashboard.html';
+                            } catch (err) {
+                                alert(`Verification failed: ${err.message}`);
+                                btn.disabled = false;
+                                btn.innerText = 'Checkout';
+                            }
+                        },
+                        "modal": {
+                            "ondismiss": function() {
+                                btn.disabled = false;
+                                btn.innerText = 'Checkout';
+                            }
+                        },
+                        "theme": {
+                            "color": "#eab308"
+                        }
+                    };
+                    const rzp = new window.Razorpay(options);
+                    rzp.on('payment.failed', function (response) {
+                        alert(`Payment failed: ${response.error.description}`);
+                        btn.disabled = false;
+                        btn.innerText = 'Checkout';
+                    });
+                    rzp.open();
+                    
                 } catch (err) {
                     alert(`Checkout failed: ${err.message}`);
                     document.getElementById('checkout-btn').disabled = false;
