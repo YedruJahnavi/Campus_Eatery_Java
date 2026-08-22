@@ -114,8 +114,12 @@ public class CartService {
 
     private void calculateTotal(Cart cart) {
         double total = 0;
-        for (Cart.CartItem item : cart.getItems()) {
-            total += item.getPrice() * item.getQuantity();
+        if (cart.getItems() != null) {
+            for (Cart.CartItem item : cart.getItems()) {
+                double price = item.getPrice() != null ? item.getPrice() : 0.0;
+                int quantity = item.getQuantity() != null ? item.getQuantity() : 0;
+                total += price * quantity;
+            }
         }
         cart.setTotal(total);
     }
