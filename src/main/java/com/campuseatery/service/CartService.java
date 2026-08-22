@@ -42,7 +42,11 @@ public class CartService {
 
         if (!cart.getItems().isEmpty()) {
             MenuItem firstCartItem = menuItemRepository.findById(cart.getItems().get(0).getMenuItemId()).orElse(null);
-            if (firstCartItem != null && !firstCartItem.getStallId().equals(menuItem.getStallId())) {
+            
+            String firstStallId = firstCartItem != null ? firstCartItem.getStallId() : null;
+            String newStallId = menuItem.getStallId();
+            
+            if (firstStallId != null && newStallId != null && !firstStallId.equals(newStallId)) {
                 throw new IllegalArgumentException("You can only order from one stall at a time. Please clear your cart first.");
             }
         }

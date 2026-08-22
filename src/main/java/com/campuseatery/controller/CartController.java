@@ -8,10 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
+@Slf4j
 public class CartController {
 
     private final CartService cartService;
@@ -32,7 +34,7 @@ public class CartController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("detail", e.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Failed to add to cart: ", e);
             return ResponseEntity.status(500).body(Map.of("detail", "Internal server error: " + e.getMessage()));
         }
     }
