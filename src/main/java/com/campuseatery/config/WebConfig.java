@@ -16,17 +16,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // Map known React routes to index.html to avoid Spring Boot 3 PathPatternParser errors with /**
-        String[] spaRoutes = {
-            "/admin", "/admin/**", 
-            "/dashboard", "/dashboard/**", 
-            "/login", "/signup", "/cart", 
-            "/vendors", "/vendors/**", 
-            "/onboarding", "/orders", "/verify"
-        };
-        
-        for (String route : spaRoutes) {
-            registry.addViewController(route).setViewName("forward:/index.html");
-        }
+        // Map clean URLs to their corresponding HTML files
+        registry.addViewController("/vendors").setViewName("forward:/vendors.html");
+        registry.addViewController("/cart").setViewName("forward:/cart.html");
+        registry.addViewController("/dashboard").setViewName("forward:/dashboard.html");
+        registry.addViewController("/menu").setViewName("forward:/menu.html");
+        registry.addViewController("/login").setViewName("forward:/index.html");
+        registry.addViewController("/signup").setViewName("forward:/index.html");
     }
 }

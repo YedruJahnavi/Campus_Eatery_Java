@@ -76,6 +76,13 @@ window.api = {
     }),
     removeCartItem: (menuItemId) => fetchWithAuth(`/cart/${menuItemId}`, { method: 'DELETE' }),
 
+    // Review APIs
+    submitReview: (stallId, rating, comment) => fetchWithAuth('/reviews', {
+        method: 'POST',
+        body: JSON.stringify({ stallId, rating, comment })
+    }),
+    getStallReviews: (stallId) => fetchPublic(`/reviews/${stallId}`),
+
     // Public APIs
     getVendors: (search = '') => fetchPublic(search ? `/vendors?search=${encodeURIComponent(search)}` : '/vendors'),
     getVendorById: (id) => fetchPublic(`/vendors/${id}`)

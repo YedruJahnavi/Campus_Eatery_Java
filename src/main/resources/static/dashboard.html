@@ -25,29 +25,103 @@
         </div>
         
         <div class="glass-card" style="border: 1px solid var(--gray-200); padding: 2rem; border-radius: 12px; background: var(--gray-100);">
-            <h3 style="margin-bottom: 1rem;">Order History</h3>
+            <h3 style="margin-bottom: 1rem;">Live Order Tracking</h3>
             <div id="orders-container">
                 <p style="color: var(--gray-500);">Loading your orders...</p>
             </div>
         </div>
     </main>
 
+    <!-- Review Modal -->
+    <div id="review-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: var(--white); padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px;">
+            <h3 style="margin-bottom: 1rem;">Rate your order</h3>
+            <input type="hidden" id="review-stall-id">
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Rating (1-5)</label>
+                <input type="number" id="review-rating" min="1" max="5" value="5" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Comment</label>
+                <textarea id="review-comment" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;"></textarea>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button onclick="closeReviewModal()" style="padding: 0.5rem 1rem; background: var(--gray-200); border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+                <button onclick="submitReview()" class="btn-primary" style="padding: 0.5rem 1rem;">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-inner">
+            <a href="/vendors.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">🏠</span>
+                <span>Home</span>
+            </a>
+            <a href="/dashboard.html" class="bottom-nav-item active">
+                <span class="bottom-nav-icon">📜</span>
+                <span>Orders</span>
+            </a>
+            <a href="/cart.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">🛒</span>
+                <span>Cart</span>
+            </a>
+        </div>
+    </nav>
+
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script>
+        let pollInterval;
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Wait for Clerk to load, then fetch orders
             const checkSession = setInterval(async () => {
                 if (window.Clerk && window.Clerk.isReady) {
                     clearInterval(checkSession);
                     if (window.Clerk.user) {
                         loadOrders();
+                        // Real-time polling every 10 seconds
+                        pollInterval = setInterval(loadOrders, 10000);
                     } else {
                         document.getElementById('orders-container').innerHTML = '<p>Please log in to view orders.</p>';
                     }
                 }
             }, 100);
         });
+
+        function getProgressBar(status) {
+            const steps = ['PENDING', 'ACCEPTED', 'PREPARING', 'READY_FOR_PICKUP', 'COMPLETED'];
+            if (status === 'CANCELLED') return `<div style="color: red; font-weight: bold;">Order Cancelled</div>`;
+            
+            const currentIndex = steps.indexOf(status);
+            if (currentIndex === -1) return `<div>Status: ${status}</div>`;
+            
+            let html = `<div style="display: flex; justify-content: space-between; margin-top: 1rem; position: relative;">`;
+            html += `<div style="position: absolute; top: 10px; left: 0; width: 100%; height: 4px; background: var(--gray-300); z-index: 1;"></div>`;
+            
+            const progressWidth = (currentIndex / (steps.length - 1)) * 100;
+            html += `<div style="position: absolute; top: 10px; left: 0; width: ${progressWidth}%; height: 4px; background: var(--black); z-index: 2; transition: width 0.5s ease-in-out;"></div>`;
+            
+            const labels = ['Placed', 'Accepted', 'Preparing', 'Ready', 'Delivered'];
+            
+            steps.forEach((step, idx) => {
+                const isCompleted = idx <= currentIndex;
+                const dotColor = isCompleted ? 'var(--black)' : 'var(--gray-300)';
+                const labelColor = isCompleted ? 'var(--black)' : 'var(--gray-500)';
+                const fontWeight = isCompleted ? 'bold' : 'normal';
+                
+                html += `
+                    <div style="z-index: 3; display: flex; flex-direction: column; align-items: center; width: 60px;">
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: ${dotColor}; border: 4px solid var(--white); transition: background 0.5s ease-in-out;"></div>
+                        <span style="font-size: 0.75rem; margin-top: 0.5rem; color: ${labelColor}; font-weight: ${fontWeight}; text-align: center;">${labels[idx]}</span>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            return html;
+        }
 
         async function loadOrders() {
             const container = document.getElementById('orders-container');
@@ -58,26 +132,54 @@
                     return;
                 }
                 
-                let html = '<ul style="list-style: none;">';
+                let html = '<div style="display: flex; flex-direction: column; gap: 1.5rem;">';
                 orders.forEach(order => {
                     const date = new Date(order.createdAt).toLocaleDateString();
                     html += `
-                        <li style="padding: 1rem 0; border-bottom: 1px solid var(--gray-300); display: flex; justify-content: space-between;">
-                            <div>
-                                <strong style="display: block; margin-bottom: 0.25rem;">Order #${order.id.substring(0, 8)}</strong>
-                                <span style="font-size: 0.875rem; color: var(--gray-600);">${date}</span>
+                        <div style="padding: 1.5rem; border: 1px solid var(--gray-300); border-radius: 8px; background: var(--white); box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                                <div>
+                                    <strong style="display: block; font-size: 1.1rem; margin-bottom: 0.25rem;">Order #${order.id.substring(0, 8)}</strong>
+                                    <span style="font-size: 0.875rem; color: var(--gray-600);">${date}</span>
+                                </div>
+                                <div style="text-align: right;">
+                                    <span style="font-weight: 600; font-size: 1.1rem;">$${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</span>
+                                    ${order.status === 'COMPLETED' ? `<br><button onclick="openReviewModal('${order.stallId}')" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.3rem 0.6rem; background: var(--black); color: var(--white); border: none; border-radius: 4px; cursor: pointer;">Rate Order</button>` : ''}
+                                </div>
                             </div>
-                            <div style="text-align: right;">
-                                <span style="font-weight: 600;">$${order.totalAmount.toFixed(2)}</span>
-                                <span style="display: block; font-size: 0.85rem; padding: 0.2rem 0.5rem; background: var(--black); color: var(--white); border-radius: 4px; margin-top: 0.25rem;">${order.status}</span>
-                            </div>
-                        </li>
+                            ${getProgressBar(order.status)}
+                        </div>
                     `;
                 });
-                html += '</ul>';
+                html += '</div>';
                 container.innerHTML = html;
             } catch (error) {
-                container.innerHTML = `<p style="color: red;">Failed to load orders: ${error.message}</p>`;
+                if (!container.innerHTML.includes('Failed')) {
+                    container.innerHTML = `<p style="color: red;">Failed to load orders: ${error.message}</p>`;
+                }
+            }
+        }
+
+        function openReviewModal(stallId) {
+            document.getElementById('review-stall-id').value = stallId;
+            document.getElementById('review-modal').style.display = 'flex';
+        }
+
+        function closeReviewModal() {
+            document.getElementById('review-modal').style.display = 'none';
+        }
+
+        async function submitReview() {
+            const stallId = document.getElementById('review-stall-id').value;
+            const rating = parseInt(document.getElementById('review-rating').value, 10);
+            const comment = document.getElementById('review-comment').value;
+
+            try {
+                await window.api.submitReview(stallId, rating, comment);
+                alert('Thank you for your review!');
+                closeReviewModal();
+            } catch (err) {
+                alert(`Failed to submit review: ${err.message}`);
             }
         }
     </script>

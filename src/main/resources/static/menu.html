@@ -54,12 +54,31 @@
         <div id="vendor-header" style="margin-bottom: 3rem;">
             <a href="/vendors.html" style="color: var(--gray-500); margin-bottom: 1rem; display: inline-block;">&larr; Back to Vendors</a>
             <h1 id="vendor-name" style="font-size: 3rem; margin-bottom: 0.5rem;">Loading...</h1>
-            <p id="vendor-desc" style="color: var(--gray-500); font-size: 1.1rem;"></p>
+            <p id="vendor-desc" style="color: var(--gray-500); font-size: 1.1rem; margin-bottom: 1rem;"></p>
+            <div id="vendor-reviews" style="display: flex; gap: 0.5rem; align-items: center;">
+                <span style="background: var(--black); color: var(--white); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; font-size: 0.9rem;">⭐ <span id="vendor-rating">--</span></span>
+                <span style="color: var(--gray-500); font-size: 0.9rem;" id="vendor-review-count">(0 reviews)</span>
+            </div>
         </div>
         
         <div id="menu-grid" style="display: grid; gap: 1.5rem;">
             <p style="color: var(--gray-500);">Loading menu items...</p>
         </div>
+    </main>
+
+    <!-- Sticky Cart Banner (Swiggy style) -->
+    <div id="sticky-cart-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: var(--black); color: var(--white); padding: 1rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin: 0 auto;">
+            <div>
+                <span id="cart-item-count" style="font-weight: bold; margin-right: 0.5rem;">1 ITEM</span>
+                <span style="opacity: 0.5;">|</span>
+                <span id="cart-total" style="margin-left: 0.5rem; font-weight: bold;">$0.00</span>
+            </div>
+            <a href="/cart.html" style="color: var(--white); font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; font-size: 0.9rem;">
+                View Cart <span style="font-size: 1.2rem;">&rarr;</span>
+            </a>
+        </div>
+    </div>
     </main>
 
     <div id="toast" class="toast">Item added to cart!</div>
@@ -92,11 +111,14 @@
         async function loadMenu(vendorId) {
             try {
                 const data = await window.api.getVendorById(vendorId);
-                const vendor = data.stall || {};
-                const menuItems = data.menuItems || [];
+                const vendor = data.stall || data || {};
+                const menuItems = vendor.menuItems || data.menuItems || [];
                 
                 document.getElementById('vendor-name').innerText = vendor.name || 'Vendor Menu';
                 document.getElementById('vendor-desc').innerText = vendor.description || '';
+
+                // Load reviews concurrently
+                loadReviews(vendorId);
 
                 if (menuItems.length === 0) {
                     document.getElementById('menu-grid').innerHTML = '<p style="color: var(--gray-500);">This vendor has no menu items listed yet.</p>';
@@ -131,8 +153,42 @@
             try {
                 await window.api.addCartItem(itemId, 1);
                 showToast();
+                updateCartBanner();
             } catch (err) {
                 alert(`Failed to add to cart: ${err.message}`);
+            }
+        }
+
+        async function updateCartBanner() {
+            if (!window.Clerk.user) return;
+            try {
+                const data = await window.api.getCart();
+                const cart = data.cart || data;
+                const items = cart.items || [];
+                
+                if (items.length > 0) {
+                    const totalQty = items.reduce((sum, item) => sum + item.quantity, 0);
+                    const totalAmt = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    
+                    document.getElementById('cart-item-count').innerText = `${totalQty} ITEM${totalQty > 1 ? 'S' : ''}`;
+                    document.getElementById('cart-total').innerText = `$${totalAmt.toFixed(2)}`;
+                    document.getElementById('sticky-cart-banner').style.transform = 'translateY(0)';
+                }
+            } catch (e) {
+                console.error("Failed to update cart banner", e);
+            }
+        }
+
+        async function loadReviews(vendorId) {
+            try {
+                const reviews = await window.api.getStallReviews(vendorId);
+                if (reviews && reviews.length > 0) {
+                    const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+                    document.getElementById('vendor-rating').innerText = avg.toFixed(1);
+                    document.getElementById('vendor-review-count').innerText = `(${reviews.length} reviews)`;
+                }
+            } catch (e) {
+                console.error("Failed to load reviews", e);
             }
         }
 

@@ -29,16 +29,28 @@ const startClerk = async () => {
     } else {
       // User is not logged in
       if (loginBtn) {
-        loginBtn.addEventListener('click', (e) => {
+        loginBtn.addEventListener('click', async (e) => {
           e.preventDefault();
-          Clerk.openSignIn({ afterSignInUrl: '/dashboard.html' });
+          console.log("Login button clicked, opening Clerk SignIn modal...");
+          try {
+            await Clerk.openSignIn({ afterSignInUrl: '/dashboard' });
+          } catch (modalErr) {
+            console.error("Clerk Modal Error:", modalErr);
+            alert("Failed to open login modal. Please ensure you are not blocking popups/scripts.");
+          }
         });
       }
 
       if (signupBtn) {
-        signupBtn.addEventListener('click', (e) => {
+        signupBtn.addEventListener('click', async (e) => {
           e.preventDefault();
-          Clerk.openSignUp({ afterSignUpUrl: '/dashboard.html' });
+          console.log("Signup button clicked, opening Clerk SignUp modal...");
+          try {
+            await Clerk.openSignUp({ afterSignUpUrl: '/dashboard' });
+          } catch (modalErr) {
+            console.error("Clerk Modal Error:", modalErr);
+            alert("Failed to open signup modal.");
+          }
         });
       }
     }
