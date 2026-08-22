@@ -112,5 +112,18 @@ window.api = {
     updateUserStatus: (userId, isActive) => fetchWithAuth(`/admin/users/${userId}/status`, {
         method: 'PUT',
         body: JSON.stringify({ isActive })
-    })
+    }),
+
+    // Address APIs
+    getAddresses: () => fetchWithAuth('/addresses'),
+    addAddress: (data) => fetchWithAuth('/addresses', {
+        method: 'POST',
+        body: JSON.stringify(data)
+    }),
+    updateAddress: (id, data) => fetchWithAuth(`/addresses/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+    }),
+    deleteAddress: (id) => fetchWithAuth(`/addresses/${id}`, { method: 'DELETE' }),
+    setDefaultAddress: (id) => fetchWithAuth(`/addresses/${id}/default`, { method: 'PATCH' })
 };

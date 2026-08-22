@@ -19,4 +19,5 @@ public class DeliveryAddress {
     private String pincode;
     private Double lat;
     private Double lon;
+    private boolean isDefault;
 }

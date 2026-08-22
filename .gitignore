@@ -13,7 +13,7 @@ target/
 # IDE
 .idea/
 .vscode/
-
+swiggy/
 # OS
 .DS_Store
 Thumbs.db

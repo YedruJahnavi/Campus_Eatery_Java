@@ -74,14 +74,10 @@
 
             <!-- Locations Section -->
             <div id="locations-section" class="tab-content" style="display: none;">
-                <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 2rem;">Saved Locations</h1>
-                <div class="glass-card" style="border: 1px solid var(--border); padding: 2rem; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-sm);">
-                    <div style="text-align: center; padding: 2rem 0;">
-                        <span style="font-size: 3rem;">📍</span>
-                        <h3 style="margin: 1rem 0 0.5rem 0;">No locations saved yet</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Save your dorm or department for faster checkout.</p>
-                        <button class="btn-primary" style="padding: 0.5rem 1rem;" onclick="alert('Coming soon!')">+ Add Location</button>
-                    </div>
+                <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 2rem;">Your Addresses</h1>
+                
+                <div id="addresses-container" class="address-grid">
+                    <p style="color: var(--text-muted);">Loading addresses...</p>
                 </div>
             </div>
 
@@ -124,6 +120,81 @@
             background: var(--gray-100);
             color: var(--primary);
         }
+        
+        /* Address Card Styles (Amazon-like) */
+        .address-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .address-card {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            background: var(--surface);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .address-card.is-default {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(234, 179, 8, 0.15); /* primary color shadow */
+        }
+        .default-badge {
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            position: absolute;
+            top: -10px;
+            left: 1rem;
+            text-transform: uppercase;
+        }
+        .address-card-add {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            min-height: 200px;
+            color: var(--gray-500);
+            transition: all 0.2s;
+        }
+        .address-card-add:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--gray-50);
+        }
+        .address-actions {
+            margin-top: auto;
+            padding-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+        .address-actions button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0;
+            font-weight: 500;
+        }
+        .address-actions button:hover {
+            text-decoration: underline;
+        }
+        .address-actions span {
+            color: var(--gray-300);
+        }
+
         @media (max-width: 768px) {
             main.container {
                 grid-template-columns: 1fr;
@@ -132,22 +203,46 @@
         }
     </style>
 
-    <!-- Review Modal -->
-    <div id="review-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
-        <div style="background: var(--white); padding: 2rem; border-radius: 12px; width: 90%; max-width: 400px;">
-            <h3 style="margin-bottom: 1rem;">Rate your order</h3>
-            <input type="hidden" id="review-stall-id">
+    <!-- Address Modal -->
+    <div id="address-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: var(--white); padding: 2rem; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+            <h3 id="address-modal-title" style="margin-bottom: 1.5rem; font-size: 1.5rem;">Add a new address</h3>
+            <input type="hidden" id="address-id">
+            
             <div style="margin-bottom: 1rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Rating (1-5)</label>
-                <input type="number" id="review-rating" min="1" max="5" value="5" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Address Label</label>
+                <input type="text" id="address-label" placeholder="e.g. Home, Hostel, Department" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;">
             </div>
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Comment</label>
-                <textarea id="review-comment" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;"></textarea>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Full Name</label>
+                <input type="text" id="address-line1" placeholder="Student Name" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;">
             </div>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Building, Room, Floor</label>
+                <input type="text" id="address-line2" placeholder="e.g. Room 402, Block B" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">City/Campus</label>
+                    <input type="text" id="address-city" placeholder="University Campus" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Pincode</label>
+                    <input type="text" id="address-pincode" style="width: 100%; padding: 0.75rem; border: 1px solid var(--gray-300); border-radius: 4px;">
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="address-default" style="width: 18px; height: 18px;">
+                <label for="address-default">Make this my default address</label>
+            </div>
+            
             <div style="display: flex; gap: 1rem; justify-content: flex-end;">
-                <button onclick="closeReviewModal()" style="padding: 0.5rem 1rem; background: var(--gray-200); border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
-                <button onclick="submitReview()" class="btn-primary" style="padding: 0.5rem 1rem;">Submit</button>
+                <button onclick="closeAddressModal()" style="padding: 0.5rem 1rem; background: var(--gray-200); border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Cancel</button>
+                <button onclick="saveAddress()" id="address-save-btn" class="btn-primary" style="padding: 0.5rem 1.5rem;">Save Address</button>
             </div>
         </div>
     </div>
@@ -237,6 +332,7 @@
                             document.getElementById('profile-details-email').innerText = user.primaryEmailAddress?.emailAddress || '';
                             
                             loadOrders();
+                            loadAddresses();
                             // Real-time polling every 10 seconds
                             pollInterval = setInterval(loadOrders, 10000);
                         } else {
@@ -257,6 +353,7 @@
                                 document.getElementById('profile-details-name').innerText = window.Clerk.user.fullName || 'Student';
                                 document.getElementById('profile-details-email').innerText = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
                                 loadOrders();
+                                loadAddresses();
                                 pollInterval = setInterval(loadOrders, 10000);
                             } else {
                                 window.location.href = '/index.html?login=true';
@@ -357,6 +454,139 @@
                 closeReviewModal();
             } catch (err) {
                 alert(`Failed to submit review: ${err.message}`);
+            }
+        }
+
+        // ==========================================
+        // Address Management Logic
+        // ==========================================
+        
+        let userAddresses = [];
+
+        async function loadAddresses() {
+            const container = document.getElementById('addresses-container');
+            try {
+                userAddresses = await window.api.getAddresses();
+                
+                let html = `
+                    <div class="address-card-add" onclick="openAddressModal()">
+                        <span style="font-size: 3rem; margin-bottom: 0.5rem;">+</span>
+                        <h3 style="font-weight: 600; font-size: 1.25rem;">Add Address</h3>
+                    </div>
+                `;
+                
+                userAddresses.forEach(address => {
+                    const isDefault = address.default === true;
+                    html += `
+                        <div class="address-card ${isDefault ? 'is-default' : ''}">
+                            ${isDefault ? '<div class="default-badge">Default</div>' : ''}
+                            <h4 style="font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 700;">${address.label || 'Saved Address'}</h4>
+                            <div style="color: var(--text-main); font-size: 0.95rem; line-height: 1.4;">
+                                <strong>${address.addressLine1 || ''}</strong><br>
+                                ${address.addressLine2 ? address.addressLine2 + '<br>' : ''}
+                                ${address.city || ''}, ${address.pincode || ''}
+                            </div>
+                            
+                            <div class="address-actions">
+                                <button onclick="openAddressModal('${address.id}')">Edit</button>
+                                <span>|</span>
+                                <button onclick="deleteAddress('${address.id}')">Remove</button>
+                                ${!isDefault ? `
+                                    <span>|</span>
+                                    <button onclick="setDefaultAddress('${address.id}')">Set as Default</button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Failed to load addresses: ${error.message}</p>`;
+            }
+        }
+
+        function openAddressModal(addressId = null) {
+            const modal = document.getElementById('address-modal');
+            const title = document.getElementById('address-modal-title');
+            
+            if (addressId) {
+                title.innerText = 'Edit Address';
+                const address = userAddresses.find(a => a.id === addressId);
+                if (address) {
+                    document.getElementById('address-id').value = address.id;
+                    document.getElementById('address-label').value = address.label || '';
+                    document.getElementById('address-line1').value = address.addressLine1 || '';
+                    document.getElementById('address-line2').value = address.addressLine2 || '';
+                    document.getElementById('address-city').value = address.city || '';
+                    document.getElementById('address-pincode').value = address.pincode || '';
+                    document.getElementById('address-default').checked = address.default === true;
+                }
+            } else {
+                title.innerText = 'Add a new address';
+                document.getElementById('address-id').value = '';
+                document.getElementById('address-label').value = '';
+                document.getElementById('address-line1').value = '';
+                document.getElementById('address-line2').value = '';
+                document.getElementById('address-city').value = '';
+                document.getElementById('address-pincode').value = '';
+                document.getElementById('address-default').checked = false;
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeAddressModal() {
+            document.getElementById('address-modal').style.display = 'none';
+        }
+
+        async function saveAddress() {
+            const btn = document.getElementById('address-save-btn');
+            btn.disabled = true;
+            btn.innerText = 'Saving...';
+            
+            const id = document.getElementById('address-id').value;
+            const addressData = {
+                label: document.getElementById('address-label').value,
+                addressLine1: document.getElementById('address-line1').value,
+                addressLine2: document.getElementById('address-line2').value,
+                city: document.getElementById('address-city').value,
+                pincode: document.getElementById('address-pincode').value,
+                default: document.getElementById('address-default').checked
+            };
+            
+            try {
+                if (id) {
+                    await window.api.updateAddress(id, addressData);
+                } else {
+                    await window.api.addAddress(addressData);
+                }
+                closeAddressModal();
+                loadAddresses();
+            } catch (err) {
+                alert(`Failed to save address: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Save Address';
+            }
+        }
+
+        async function deleteAddress(id) {
+            if (!confirm('Are you sure you want to delete this address?')) return;
+            try {
+                await window.api.deleteAddress(id);
+                loadAddresses();
+            } catch (err) {
+                alert(`Failed to delete address: ${err.message}`);
+            }
+        }
+
+        async function setDefaultAddress(id) {
+            try {
+                await window.api.setDefaultAddress(id);
+                loadAddresses();
+            } catch (err) {
+                alert(`Failed to set default: ${err.message}`);
             }
         }
     </script>
