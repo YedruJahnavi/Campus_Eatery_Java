@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Eatery | Cart</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .qty-btn {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .qty-btn:hover {
+            background: var(--gray-200);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo"><a href="/index.html">CampusEatery.</a></div>
+            <div class="nav-links">
+                <a href="/dashboard.html">Dashboard</a>
+                <div id="user-button" style="display: none;"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 4rem 2rem; max-width: 800px;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">Your Cart</h1>
+        
+        <div id="cart-container" class="glass-card" style="border: 1px solid var(--gray-200); padding: 2rem; border-radius: 12px; background: var(--gray-100);">
+            <p style="color: var(--gray-500);">Loading cart...</p>
+        </div>
+        
+        <div id="checkout-section" style="margin-top: 2rem; text-align: right; display: none;">
+            <h3 id="cart-total" style="font-size: 1.5rem; margin-bottom: 1rem;">Total: $0.00</h3>
+            <button id="checkout-btn" class="btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem; width: 100%; max-width: 300px;">Checkout</button>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkSession = setInterval(async () => {
+                if (window.Clerk && window.Clerk.isReady) {
+                    clearInterval(checkSession);
+                    if (window.Clerk.user) {
+                        loadCart();
+                    } else {
+                        document.getElementById('cart-container').innerHTML = '<p>Please log in to view your cart.</p>';
+                    }
+                }
+            }, 100);
+            
+            document.getElementById('checkout-btn').addEventListener('click', async () => {
+                try {
+                    const btn = document.getElementById('checkout-btn');
+                    btn.disabled = true;
+                    btn.innerText = 'Processing...';
+                    await window.api.checkout();
+                    alert('Order placed successfully!');
+                    window.location.href = '/dashboard.html';
+                } catch (err) {
+                    alert(`Checkout failed: ${err.message}`);
+                    document.getElementById('checkout-btn').disabled = false;
+                    document.getElementById('checkout-btn').innerText = 'Checkout';
+                }
+            });
+        });
+
+        async function loadCart() {
+            const container = document.getElementById('cart-container');
+            const checkoutSection = document.getElementById('checkout-section');
+            
+            try {
+                const cart = await window.api.getCart();
+                const items = cart.items || [];
+                
+                if (items.length === 0) {
+                    container.innerHTML = '<p style="color: var(--gray-500);">Your cart is empty.</p>';
+                    checkoutSection.style.display = 'none';
+                    return;
+                }
+                
+                let html = '';
+                let total = 0;
+                
+                items.forEach(item => {
+                    const price = item.price ? (item.price / 100) : 0;
+                    total += price * item.quantity;
+                    
+                    html += `
+                        <div class="cart-item">
+                            <div>
+                                <h4 style="font-size: 1.1rem; margin-bottom: 0.25rem;">${item.name || 'Menu Item'}</h4>
+                                <span style="font-weight: 600; color: var(--gray-600);">$${price.toFixed(2)}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <button class="qty-btn" onclick="updateQty('${item.menuItemId}', 'decrease')">-</button>
+                                    <span style="width: 20px; text-align: center;">${item.quantity}</span>
+                                    <button class="qty-btn" onclick="updateQty('${item.menuItemId}', 'increase')">+</button>
+                                </div>
+                                <button onclick="removeItem('${item.menuItemId}')" style="background: none; border: none; color: red; cursor: pointer; font-size: 0.9rem; text-decoration: underline;">Remove</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                document.getElementById('cart-total').innerText = `Total: $${total.toFixed(2)}`;
+                checkoutSection.style.display = 'block';
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Failed to load cart: ${error.message}</p>`;
+            }
+        }
+
+        async function updateQty(itemId, action) {
+            try {
+                await window.api.updateCartItem(itemId, action);
+                loadCart();
+            } catch (err) {
+                alert(`Update failed: ${err.message}`);
+            }
+        }
+        
+        async function removeItem(itemId) {
+            try {
+                await window.api.removeCartItem(itemId);
+                loadCart();
+            } catch (err) {
+                alert(`Remove failed: ${err.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

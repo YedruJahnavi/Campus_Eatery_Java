@@ -21,7 +21,11 @@
 
     <main class="container" style="padding: 4rem 2rem;">
         <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">Explore Campus Eateries</h1>
-        <p style="color: var(--gray-500); margin-bottom: 3rem; font-size: 1.1rem;">Discover local stalls and campus micro-kitchens.</p>
+        <p style="color: var(--gray-500); margin-bottom: 2rem; font-size: 1.1rem;">Discover local stalls and campus micro-kitchens.</p>
+        
+        <div style="margin-bottom: 3rem;">
+            <input type="text" id="search-input" placeholder="Search for eateries, categories, or food..." style="width: 100%; max-width: 500px; padding: 1rem 1.5rem; border: 1px solid var(--gray-300); border-radius: 30px; font-size: 1rem; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--black)'" onblur="this.style.borderColor='var(--gray-300)'">
+        </div>
         
         <div id="vendors-grid" class="eateries-grid">
             <!-- Dynamic content will load here -->
@@ -38,21 +42,35 @@
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVendors();
+
+            const searchInput = document.getElementById('search-input');
+            let debounceTimer;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    loadVendors(e.target.value);
+                }, 300); // 300ms debounce
+            });
+        });
+
+        async function loadVendors(searchQuery = '') {
             const grid = document.getElementById('vendors-grid');
+            grid.innerHTML = '<p style="grid-column: 1 / -1; color: var(--gray-500);">Loading eateries...</p>';
             try {
-                const data = await window.api.getVendors();
+                const data = await window.api.getVendors(searchQuery);
                 const vendors = data.vendors || [];
                 
                 if (vendors.length === 0) {
-                    grid.innerHTML = '<p style="grid-column: 1 / -1; color: var(--gray-500);">No eateries available at the moment.</p>';
+                    grid.innerHTML = '<p style="grid-column: 1 / -1; color: var(--gray-500);">No eateries found matching your search.</p>';
                     return;
                 }
                 
                 let html = '';
                 vendors.forEach(vendor => {
                     html += `
-                    <a href="/menu.html?vendorId=${vendor.id}" class="eatery-card animate-fade-in delay-1">
+                    <a href="/menu.html?vendorId=${vendor.id}" class="eatery-card animate-fade-in">
                         <div class="eatery-img" style="background: linear-gradient(135deg, #e5e5e5, #d4d4d4);">
                             <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">${vendor.name ? vendor.name.substring(0, 2).toUpperCase() : 'CE'}</span>
                         </div>
@@ -67,7 +85,7 @@
             } catch (err) {
                 grid.innerHTML = `<p style="grid-column: 1 / -1; color: red;">Error loading eateries: ${err.message}</p>`;
             }
-        });
+        }
     </script>
 </body>
 </html>

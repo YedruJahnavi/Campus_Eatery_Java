@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Eatery | Menu</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .menu-item-card {
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s ease;
+        }
+        .menu-item-card:hover {
+            border-color: var(--black);
+        }
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--black);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo"><a href="/index.html">CampusEatery.</a></div>
+            <div class="nav-links">
+                <a href="/cart.html" style="font-weight: 600;">Cart &rarr;</a>
+                <div id="user-button" style="display: none;"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 4rem 2rem;">
+        <div id="vendor-header" style="margin-bottom: 3rem;">
+            <a href="/vendors.html" style="color: var(--gray-500); margin-bottom: 1rem; display: inline-block;">&larr; Back to Vendors</a>
+            <h1 id="vendor-name" style="font-size: 3rem; margin-bottom: 0.5rem;">Loading...</h1>
+            <p id="vendor-desc" style="color: var(--gray-500); font-size: 1.1rem;"></p>
+        </div>
+        
+        <div id="menu-grid" style="display: grid; gap: 1.5rem;">
+            <p style="color: var(--gray-500);">Loading menu items...</p>
+        </div>
+    </main>
+
+    <div id="toast" class="toast">Item added to cart!</div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        let isAuthReady = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkSession = setInterval(() => {
+                if (window.Clerk && window.Clerk.isReady) {
+                    clearInterval(checkSession);
+                    isAuthReady = true;
+                }
+            }, 100);
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const vendorId = urlParams.get('vendorId');
+
+            if (!vendorId) {
+                document.getElementById('vendor-name').innerText = 'Vendor Not Found';
+                document.getElementById('menu-grid').innerHTML = '<p>No vendor ID provided.</p>';
+                return;
+            }
+
+            loadMenu(vendorId);
+        });
+
+        async function loadMenu(vendorId) {
+            try {
+                const data = await window.api.getVendorById(vendorId);
+                const vendor = data.stall || {};
+                const menuItems = data.menuItems || [];
+                
+                document.getElementById('vendor-name').innerText = vendor.name || 'Vendor Menu';
+                document.getElementById('vendor-desc').innerText = vendor.description || '';
+
+                if (menuItems.length === 0) {
+                    document.getElementById('menu-grid').innerHTML = '<p style="color: var(--gray-500);">This vendor has no menu items listed yet.</p>';
+                    return;
+                }
+                
+                let html = '';
+                menuItems.forEach(item => {
+                    const price = item.pricePaise ? (item.pricePaise / 100).toFixed(2) : '0.00';
+                    html += `
+                        <div class="menu-item-card">
+                            <div>
+                                <h3 style="font-size: 1.25rem; margin-bottom: 0.25rem;">${item.name}</h3>
+                                <p style="color: var(--gray-500); font-size: 0.9rem; margin-bottom: 0.5rem;">${item.description || ''}</p>
+                                <span style="font-weight: 600;">$${price}</span>
+                            </div>
+                            <button onclick="addToCart('${item.id}')" class="btn-primary" style="padding: 0.5rem 1rem;">Add</button>
+                        </div>
+                    `;
+                });
+                document.getElementById('menu-grid').innerHTML = html;
+            } catch (err) {
+                document.getElementById('menu-grid').innerHTML = `<p style="color: red;">Error loading menu: ${err.message}</p>`;
+            }
+        }
+
+        async function addToCart(itemId) {
+            if (!isAuthReady || !window.Clerk.user) {
+                window.Clerk.openSignIn();
+                return;
+            }
+            try {
+                await window.api.addCartItem(itemId, 1);
+                showToast();
+            } catch (err) {
+                alert(`Failed to add to cart: ${err.message}`);
+            }
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

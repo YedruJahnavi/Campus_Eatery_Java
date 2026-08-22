@@ -64,7 +64,19 @@ window.api = {
         body: JSON.stringify({ status })
     }),
 
+    // Cart APIs
+    getCart: () => fetchWithAuth('/cart'),
+    addCartItem: (menuItemId, quantity) => fetchWithAuth('/cart/add', {
+        method: 'POST',
+        body: JSON.stringify({ menuItemId, quantity })
+    }),
+    updateCartItem: (menuItemId, action) => fetchWithAuth(`/cart/${menuItemId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ action }) // 'increase' or 'decrease'
+    }),
+    removeCartItem: (menuItemId) => fetchWithAuth(`/cart/${menuItemId}`, { method: 'DELETE' }),
+
     // Public APIs
-    getVendors: () => fetchPublic('/vendors'),
+    getVendors: (search = '') => fetchPublic(search ? `/vendors?search=${encodeURIComponent(search)}` : '/vendors'),
     getVendorById: (id) => fetchPublic(`/vendors/${id}`)
 };

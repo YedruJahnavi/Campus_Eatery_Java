@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Eatery | Vendor Portal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .order-card {
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background: var(--white);
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            padding-bottom: 1rem;
+        }
+        .status-select {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid var(--gray-300);
+            background: var(--gray-100);
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body style="background-color: var(--gray-100);">
+
+    <nav class="navbar" style="background-color: var(--black); color: var(--white);">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo"><a href="/index.html" style="color: var(--white);">CampusEatery Vendor Portal</a></div>
+            <div class="nav-links">
+                <div id="user-button" style="display: none;"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 4rem 2rem;">
+        <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">Manage Orders</h1>
+        
+        <div id="vendor-orders-container">
+            <p style="color: var(--gray-500);">Loading incoming orders...</p>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkSession = setInterval(async () => {
+                if (window.Clerk && window.Clerk.isReady) {
+                    clearInterval(checkSession);
+                    if (window.Clerk.user) {
+                        loadVendorOrders();
+                    } else {
+                        document.getElementById('vendor-orders-container').innerHTML = '<p>Please log in as a Vendor to view orders.</p>';
+                    }
+                }
+            }, 100);
+        });
+
+        async function loadVendorOrders() {
+            const container = document.getElementById('vendor-orders-container');
+            try {
+                const orders = await window.api.getVendorOrders();
+                
+                if (orders.length === 0) {
+                    container.innerHTML = '<p style="color: var(--gray-500);">No orders found for your stall.</p>';
+                    return;
+                }
+                
+                let html = '';
+                orders.forEach(order => {
+                    const date = new Date(order.createdAt).toLocaleString();
+                    html += `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>
+                                    <strong style="display: block; font-size: 1.1rem;">Order #${order.id.substring(0, 8)}</strong>
+                                    <span style="font-size: 0.85rem; color: var(--gray-500);">${date}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <span style="font-weight: bold;">$${order.totalAmount.toFixed(2)}</span>
+                                    <select class="status-select" onchange="updateStatus('${order.id}', this.value)">
+                                        <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+                                        <option value="ACCEPTED" ${order.status === 'ACCEPTED' ? 'selected' : ''}>Accepted</option>
+                                        <option value="PREPARING" ${order.status === 'PREPARING' ? 'selected' : ''}>Preparing</option>
+                                        <option value="READY_FOR_PICKUP" ${order.status === 'READY_FOR_PICKUP' ? 'selected' : ''}>Ready for Pickup</option>
+                                        <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Completed</option>
+                                        <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''}>Cancelled</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <ul style="list-style: none; padding: 0;">
+                                ${order.items.map(item => `
+                                    <li style="display: flex; justify-content: space-between; padding: 0.25rem 0; color: var(--gray-600);">
+                                        <span>${item.quantity}x ${item.name}</span>
+                                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+            } catch (error) {
+                if (error.message.includes('403')) {
+                    container.innerHTML = `<p style="color: red;">Access Denied. Your account does not have Vendor privileges.</p>`;
+                } else {
+                    container.innerHTML = `<p style="color: red;">Failed to load orders: ${error.message}</p>`;
+                }
+            }
+        }
+
+        async function updateStatus(orderId, newStatus) {
+            try {
+                await window.api.updateOrderStatus(orderId, newStatus);
+                // Optionally show a toast or alert
+            } catch (err) {
+                alert(`Failed to update status: ${err.message}`);
+                loadVendorOrders(); // reload to revert select box
+            }
+        }
+    </script>
+</body>
+</html>
