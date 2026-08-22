@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Eatery | Vendors</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo"><a href="/index.html">CampusEatery.</a></div>
+            <div class="nav-links">
+                <a href="#login" id="login-btn">Log in</a>
+                <a href="#signup" id="signup-btn" class="btn-primary">Sign up</a>
+                <div id="user-button" style="display: none;"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" style="padding: 4rem 2rem;">
+        <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">Explore Campus Eateries</h1>
+        <p style="color: var(--gray-500); margin-bottom: 3rem; font-size: 1.1rem;">Discover local stalls and campus micro-kitchens.</p>
+        
+        <div id="vendors-grid" class="eateries-grid">
+            <!-- Dynamic content will load here -->
+            <p style="grid-column: 1 / -1; color: var(--gray-500);">Loading eateries...</p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Campus Eatery. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const grid = document.getElementById('vendors-grid');
+            try {
+                const data = await window.api.getVendors();
+                const vendors = data.vendors || [];
+                
+                if (vendors.length === 0) {
+                    grid.innerHTML = '<p style="grid-column: 1 / -1; color: var(--gray-500);">No eateries available at the moment.</p>';
+                    return;
+                }
+                
+                let html = '';
+                vendors.forEach(vendor => {
+                    html += `
+                    <a href="/menu.html?vendorId=${vendor.id}" class="eatery-card animate-fade-in delay-1">
+                        <div class="eatery-img" style="background: linear-gradient(135deg, #e5e5e5, #d4d4d4);">
+                            <span style="font-weight: bold; font-size: 2rem; color: #a3a3a3;">${vendor.name ? vendor.name.substring(0, 2).toUpperCase() : 'CE'}</span>
+                        </div>
+                        <div class="eatery-content">
+                            <h3>${vendor.name}</h3>
+                            <p>${vendor.description || 'Premium Campus Food'}</p>
+                        </div>
+                    </a>
+                    `;
+                });
+                grid.innerHTML = html;
+            } catch (err) {
+                grid.innerHTML = `<p style="grid-column: 1 / -1; color: red;">Error loading eateries: ${err.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

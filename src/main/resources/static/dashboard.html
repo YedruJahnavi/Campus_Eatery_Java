@@ -19,13 +19,67 @@
     </nav>
 
     <main class="container" style="padding: 4rem 2rem;">
-        <h1 style="font-size: 2.5rem; margin-bottom: 2rem;">Welcome back!</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1 style="font-size: 2.5rem;">Your Dashboard</h1>
+            <a href="/vendors.html" class="btn-primary">Order Food</a>
+        </div>
+        
         <div class="glass-card" style="border: 1px solid var(--gray-200); padding: 2rem; border-radius: 12px; background: var(--gray-100);">
-            <h3>Dashboard under construction.</h3>
-            <p style="color: var(--gray-600); margin-top: 1rem;">This is a secure area. You have successfully authenticated using Clerk.</p>
+            <h3 style="margin-bottom: 1rem;">Order History</h3>
+            <div id="orders-container">
+                <p style="color: var(--gray-500);">Loading your orders...</p>
+            </div>
         </div>
     </main>
 
+    <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Wait for Clerk to load, then fetch orders
+            const checkSession = setInterval(async () => {
+                if (window.Clerk && window.Clerk.isReady) {
+                    clearInterval(checkSession);
+                    if (window.Clerk.user) {
+                        loadOrders();
+                    } else {
+                        document.getElementById('orders-container').innerHTML = '<p>Please log in to view orders.</p>';
+                    }
+                }
+            }, 100);
+        });
+
+        async function loadOrders() {
+            const container = document.getElementById('orders-container');
+            try {
+                const orders = await window.api.getStudentOrders();
+                if (orders.length === 0) {
+                    container.innerHTML = '<p style="color: var(--gray-500);">You have no past orders. Time to eat!</p>';
+                    return;
+                }
+                
+                let html = '<ul style="list-style: none;">';
+                orders.forEach(order => {
+                    const date = new Date(order.createdAt).toLocaleDateString();
+                    html += `
+                        <li style="padding: 1rem 0; border-bottom: 1px solid var(--gray-300); display: flex; justify-content: space-between;">
+                            <div>
+                                <strong style="display: block; margin-bottom: 0.25rem;">Order #${order.id.substring(0, 8)}</strong>
+                                <span style="font-size: 0.875rem; color: var(--gray-600);">${date}</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-weight: 600;">$${order.totalAmount.toFixed(2)}</span>
+                                <span style="display: block; font-size: 0.85rem; padding: 0.2rem 0.5rem; background: var(--black); color: var(--white); border-radius: 4px; margin-top: 0.25rem;">${order.status}</span>
+                            </div>
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Failed to load orders: ${error.message}</p>`;
+            }
+        }
+    </script>
 </body>
 </html>
