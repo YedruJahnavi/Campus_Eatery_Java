@@ -1,1 +1,39 @@
+# React
+node_modules/
+.env
+.env.local
+dist/
+build/
+*.tgz
+.clerk
 Campus_Eatery/
+# Spring Boot
+target/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IntelliJ
+.idea/
+
+# CLion
+.idea/
+*.swp
+*.swo
+*.orig
+*.rej
+*.pyc
+
+# VS Code
+.vscode/
+*.code-search-result
+*.log
+
+# Git
+.git/
+.gitignore
