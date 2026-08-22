@@ -144,7 +144,7 @@
                                     <span style="font-size: 0.875rem; color: var(--gray-600);">${date}</span>
                                 </div>
                                 <div style="text-align: right;">
-                                    <span style="font-weight: 600; font-size: 1.1rem;">$${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</span>
+                                    <span style="font-weight: 600; font-size: 1.1rem;">₹${order.totalAmount ? order.totalAmount.toFixed(2) : '0.00'}</span>
                                     ${order.status === 'COMPLETED' ? `<br><button onclick="openReviewModal('${order.stallId}')" style="margin-top: 0.5rem; font-size: 0.8rem; padding: 0.3rem 0.6rem; background: var(--black); color: var(--white); border: none; border-radius: 4px; cursor: pointer;">Rate Order</button>` : ''}
                                 </div>
                             </div>

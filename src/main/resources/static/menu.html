@@ -72,7 +72,7 @@
             <div>
                 <span id="cart-item-count" style="font-weight: bold; margin-right: 0.5rem;">1 ITEM</span>
                 <span style="opacity: 0.5;">|</span>
-                <span id="cart-total" style="margin-left: 0.5rem; font-weight: bold;">$0.00</span>
+                <span id="cart-total" style="margin-left: 0.5rem; font-weight: bold;">₹0.00</span>
             </div>
             <a href="/cart.html" style="color: var(--white); font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; font-size: 0.9rem;">
                 View Cart <span style="font-size: 1.2rem;">&rarr;</span>
@@ -133,7 +133,7 @@
                             <div>
                                 <h3 style="font-size: 1.25rem; margin-bottom: 0.25rem;">${item.name}</h3>
                                 <p style="color: var(--gray-500); font-size: 0.9rem; margin-bottom: 0.5rem;">${item.description || ''}</p>
-                                <span style="font-weight: 600;">$${price}</span>
+                                <span style="font-weight: 600;">₹${price}</span>
                             </div>
                             <button onclick="addToCart('${item.id}')" class="btn-primary" style="padding: 0.5rem 1rem;">Add</button>
                         </div>
@@ -171,7 +171,7 @@
                     const totalAmt = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                     
                     document.getElementById('cart-item-count').innerText = `${totalQty} ITEM${totalQty > 1 ? 'S' : ''}`;
-                    document.getElementById('cart-total').innerText = `$${totalAmt.toFixed(2)}`;
+                    document.getElementById('cart-total').innerText = `₹${totalAmt.toFixed(2)}`;
                     document.getElementById('sticky-cart-banner').style.transform = 'translateY(0)';
                 }
             } catch (e) {

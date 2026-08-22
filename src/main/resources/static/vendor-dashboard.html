@@ -87,7 +87,7 @@
                                     <span style="font-size: 0.85rem; color: var(--gray-500);">${date}</span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <span style="font-weight: bold;">$${order.totalAmount.toFixed(2)}</span>
+                                    <span style="font-weight: bold;">₹${order.totalAmount.toFixed(2)}</span>
                                     <select class="status-select" onchange="updateStatus('${order.id}', this.value)">
                                         <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Pending</option>
                                         <option value="ACCEPTED" ${order.status === 'ACCEPTED' ? 'selected' : ''}>Accepted</option>
@@ -102,7 +102,7 @@
                                 ${order.items.map(item => `
                                     <li style="display: flex; justify-content: space-between; padding: 0.25rem 0; color: var(--gray-600);">
                                         <span>${item.quantity}x ${item.name}</span>
-                                        <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                                        <span>₹${(item.price * item.quantity).toFixed(2)}</span>
                                     </li>
                                 `).join('')}
                             </ul>
