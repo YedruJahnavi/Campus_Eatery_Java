@@ -64,7 +64,7 @@ const startClerk = async () => {
   const script = document.createElement('script');
   script.setAttribute('data-clerk-publishable-key', PUBLISHABLE_KEY);
   script.async = true;
-  script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+  script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@4/dist/clerk.browser.js`;
   script.crossOrigin = 'anonymous';
   script.addEventListener('load', startClerk);
   script.addEventListener('error', () => {

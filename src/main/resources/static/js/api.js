@@ -33,6 +33,9 @@ async function fetchWithAuth(endpoint, options = {}) {
         }
         throw new Error(errorMsg);
     }
+    
+    return response.json();
+}
 
 async function fetchPublic(endpoint, options = {}) {
     const headers = {

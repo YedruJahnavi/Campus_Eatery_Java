@@ -46,7 +46,8 @@ public class ApiController {
         try {
             return ResponseEntity.ok(Map.of("vendors", apiService.getVendors(search)));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("detail", "Internal server error"));
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("detail", "Internal server error: " + e.getMessage()));
         }
     }
 
