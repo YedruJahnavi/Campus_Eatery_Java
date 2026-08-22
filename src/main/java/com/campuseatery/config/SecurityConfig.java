@@ -55,6 +55,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/delivery/**").hasRole("DELIVERY")
                 .requestMatchers(HttpMethod.GET, "/api/vendors/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/config").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/recommendations").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
                 // API endpoints require authentication

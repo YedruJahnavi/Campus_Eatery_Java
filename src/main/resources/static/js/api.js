@@ -95,7 +95,7 @@ window.api = {
     // Public APIs
     getVendors: (search = '') => fetchPublic(search ? `/vendors?search=${encodeURIComponent(search)}` : '/vendors'),
     getVendorById: (id) => fetchPublic(`/vendors/${id}`),
-    getRecommendations: () => fetchPublic('/vendors/recommendations'),
+    getRecommendations: () => fetchPublic('/recommendations'),
 
     // Delivery APIs
     getAvailableDeliveries: () => fetchWithAuth('/delivery/available'),
