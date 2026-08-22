@@ -52,7 +52,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Public endpoints
                 .requestMatchers("/api/admin/login").permitAll()
-                .requestMatchers("/api/admin/**").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/vendors/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()

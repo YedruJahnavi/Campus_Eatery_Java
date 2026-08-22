@@ -116,9 +116,9 @@
                             </div>
                             <div style="display: flex; align-items: center; gap: 1rem;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <button class="qty-btn" onclick="updateQty('${item.menuItemId}', 'decrease')">-</button>
+                                    <button class="qty-btn" onclick="updateQty('${item.menuItemId}', 'decrement')">-</button>
                                     <span style="width: 20px; text-align: center;">${item.quantity}</span>
-                                    <button class="qty-btn" onclick="updateQty('${item.menuItemId}', 'increase')">+</button>
+                                    <button class="qty-btn" onclick="updateQty('${item.menuItemId}', 'increment')">+</button>
                                 </div>
                                 <button onclick="removeItem('${item.menuItemId}')" style="background: none; border: none; color: red; cursor: pointer; font-size: 0.9rem; text-decoration: underline;">Remove</button>
                             </div>

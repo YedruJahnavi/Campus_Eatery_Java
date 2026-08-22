@@ -147,7 +147,7 @@ public class OrderService {
             throw new IllegalArgumentException("Order status is required");
         }
         String normalized = status.trim().toUpperCase();
-        if (!List.of("PLACED", "PREPARING", "READY_FOR_PICKUP", "DELIVERED", "CANCELLED", "COMPLETED").contains(normalized)) {
+        if (!List.of("PLACED", "ACCEPTED", "PREPARING", "READY_FOR_PICKUP", "DELIVERED", "CANCELLED", "COMPLETED").contains(normalized)) {
             throw new IllegalArgumentException("Invalid order status: " + status);
         }
         return normalized;

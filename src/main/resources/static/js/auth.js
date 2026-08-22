@@ -1,4 +1,3 @@
-const PUBLISHABLE_KEY = 'pk_test_cHJpbWFyeS1tYW1tYWwtMzMuY2xlcmsuYWNjb3VudHMuZGV2JA';
 
 const startClerk = async () => {
   const Clerk = window.Clerk;
@@ -68,15 +67,30 @@ const startClerk = async () => {
 };
 
 // Initialize Clerk via script injection
-(() => {
-  const script = document.createElement('script');
-  script.setAttribute('data-clerk-publishable-key', PUBLISHABLE_KEY);
-  script.async = true;
-  script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@4/dist/clerk.browser.js`;
-  script.crossOrigin = 'anonymous';
-  script.addEventListener('load', startClerk);
-  script.addEventListener('error', () => {
-    document.getElementById('no-frontend-api-warning').hidden = false;
-  });
-  document.body.appendChild(script);
+(async () => {
+  try {
+    const res = await fetch('/api/config');
+    if (!res.ok) throw new Error('Failed to fetch config');
+    const config = await res.json();
+    const publishableKey = config.clerkPublishableKey;
+
+    if (!publishableKey) {
+      console.warn("Clerk Publishable Key is missing from config!");
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.setAttribute('data-clerk-publishable-key', publishableKey);
+    script.async = true;
+    script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@4/dist/clerk.browser.js`;
+    script.crossOrigin = 'anonymous';
+    script.addEventListener('load', startClerk);
+    script.addEventListener('error', () => {
+      const warning = document.getElementById('no-frontend-api-warning');
+      if(warning) warning.hidden = false;
+    });
+    document.body.appendChild(script);
+  } catch (e) {
+    console.error("Error initializing clerk script:", e);
+  }
 })();
