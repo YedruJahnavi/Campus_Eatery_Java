@@ -60,7 +60,13 @@ public class CartService {
             Cart.CartItem newItem = new Cart.CartItem();
             newItem.setMenuItemId(dto.getMenuItemId());
             newItem.setQuantity(dto.getQuantity());
-            newItem.setPrice((double) menuItem.getPricePaise());
+            
+            double itemPrice = 0.0;
+            if (menuItem.getPricePaise() != null) {
+                itemPrice = (double) menuItem.getPricePaise();
+            }
+            newItem.setPrice(itemPrice);
+            
             newItem.setName(menuItem.getName());
             cart.getItems().add(newItem);
         }
