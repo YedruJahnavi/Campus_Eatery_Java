@@ -79,4 +79,16 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
+    @Bean
+    public org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder(
+            @org.springframework.beans.factory.annotation.Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri:}") String issuerUri) {
+        if (issuerUri == null || issuerUri.isBlank()) {
+            // Provide a dummy decoder so the SecurityFilterChain bean doesn't fail to load when secrets are missing
+            return token -> {
+                throw new org.springframework.security.oauth2.jwt.JwtException("JWT processing is disabled because CLERK_ISSUER_URI is not configured.");
+            };
+        }
+        return org.springframework.security.oauth2.jwt.JwtDecoders.fromIssuerLocation(issuerUri);
+    }
 }
