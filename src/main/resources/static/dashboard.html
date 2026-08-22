@@ -84,7 +84,8 @@
                         // Real-time polling every 10 seconds
                         pollInterval = setInterval(loadOrders, 10000);
                     } else {
-                        document.getElementById('orders-container').innerHTML = '<p>Please log in to view orders.</p>';
+                        document.getElementById('orders-container').innerHTML = '<p>Redirecting to login...</p>';
+                        window.location.href = '/index.html?login=true';
                     }
                 }
             }, 100);

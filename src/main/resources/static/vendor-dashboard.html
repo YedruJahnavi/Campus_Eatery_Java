@@ -59,7 +59,8 @@
                     if (window.Clerk.user) {
                         loadVendorOrders();
                     } else {
-                        document.getElementById('vendor-orders-container').innerHTML = '<p>Please log in as a Vendor to view orders.</p>';
+                        document.getElementById('vendor-orders-container').innerHTML = '<p>Redirecting to login...</p>';
+                        window.location.href = '/index.html?login=true';
                     }
                 }
             }, 100);

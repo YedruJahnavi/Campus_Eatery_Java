@@ -65,7 +65,8 @@
                     if (window.Clerk.user) {
                         loadCart();
                     } else {
-                        document.getElementById('cart-container').innerHTML = '<p>Please log in to view your cart.</p>';
+                        document.getElementById('cart-container').innerHTML = '<p>Redirecting to login...</p>';
+                        window.location.href = '/index.html?login=true';
                     }
                 }
             }, 100);

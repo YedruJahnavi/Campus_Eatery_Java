@@ -53,6 +53,14 @@ const startClerk = async () => {
           }
         });
       }
+      
+      if (window.location.search.includes('login=true')) {
+        try {
+          await Clerk.openSignIn({ afterSignInUrl: '/dashboard.html' });
+        } catch (err) {
+          console.error(err);
+        }
+      }
     }
   } catch (err) {
     console.error('Error starting Clerk: ', err);
