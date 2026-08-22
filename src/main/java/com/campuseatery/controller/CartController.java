@@ -35,7 +35,9 @@ public class CartController {
             return ResponseEntity.badRequest().body(Map.of("detail", e.getMessage()));
         } catch (Exception e) {
             log.error("Failed to add to cart: ", e);
-            return ResponseEntity.status(500).body(Map.of("detail", "Internal server error: " + e.getMessage()));
+            String errorMsg = e.toString();
+            if (e.getCause() != null) errorMsg += " | Cause: " + e.getCause().toString();
+            return ResponseEntity.status(500).body(Map.of("detail", "Internal server error: " + errorMsg));
         }
     }
 
