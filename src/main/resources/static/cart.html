@@ -60,15 +60,37 @@
     <script src="/js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const checkSession = setInterval(async () => {
+            let authChecked = false;
+            const checkAuth = setInterval(() => {
                 if (window.Clerk && window.Clerk.isReady) {
-                    clearInterval(checkSession);
-                    if (window.Clerk.user) {
-                        loadCart();
-                    } else {
-                        document.getElementById('cart-container').innerHTML = '<p>Redirecting to login...</p>';
-                        window.location.href = '/index.html?login=true';
-                    }
+                    clearInterval(checkAuth);
+                    
+                    // Add listener to handle session state changes correctly
+                    window.Clerk.addListener(({ user }) => {
+                        if (authChecked) return;
+                        authChecked = true;
+                        
+                        if (user) {
+                            loadCart();
+                        } else {
+                            document.getElementById('cart-container').innerHTML = '<p>Session expired. Redirecting to login...</p>';
+                            setTimeout(() => {
+                                window.location.href = '/index.html?login=true';
+                            }, 1500);
+                        }
+                    });
+                    
+                    // Fallback in case listener doesn't trigger immediately
+                    setTimeout(() => {
+                        if (!authChecked) {
+                            authChecked = true;
+                            if (window.Clerk.user) {
+                                loadCart();
+                            } else {
+                                window.location.href = '/index.html?login=true';
+                            }
+                        }
+                    }, 500);
                 }
             }, 100);
             
