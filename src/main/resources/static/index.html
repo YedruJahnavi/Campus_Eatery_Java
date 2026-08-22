@@ -13,8 +13,9 @@
         <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <div class="logo">CampusEatery.</div>
             <div class="nav-links">
-                <a href="#login">Log in</a>
-                <a href="#signup" class="btn-primary">Sign up</a>
+                <a href="#login" id="login-btn">Log in</a>
+                <a href="#signup" id="signup-btn" class="btn-primary">Sign up</a>
+                <div id="user-button" style="display: none;"></div>
             </div>
         </div>
     </nav>
@@ -109,8 +110,10 @@
     <footer>
         <div class="container">
             <p>&copy; 2026 Campus Eatery. All rights reserved.</p>
+            <p id="no-frontend-api-warning" hidden style="color: red; margin-top: 1rem;">Failed to load Clerk Authentication SDK.</p>
         </div>
     </footer>
 
+    <script src="/js/auth.js"></script>
 </body>
 </html>
