@@ -32,7 +32,8 @@ public class CartController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("detail", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("detail", "Internal server error"));
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("detail", "Internal server error: " + e.getMessage()));
         }
     }
 

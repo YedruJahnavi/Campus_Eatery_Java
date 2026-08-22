@@ -33,6 +33,10 @@ public class CartService {
         }
 
         Cart cart = getCart(userId);
+        if (cart.getItems() == null) {
+            cart.setItems(new ArrayList<>());
+        }
+        
         MenuItem menuItem = menuItemRepository.findById(dto.getMenuItemId())
                 .orElseThrow(() -> new IllegalArgumentException("Menu item not found"));
 
