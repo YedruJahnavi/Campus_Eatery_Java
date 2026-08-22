@@ -53,15 +53,36 @@
     <script src="/js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const checkSession = setInterval(async () => {
+            let authChecked = false;
+            const checkAuth = setInterval(() => {
                 if (window.Clerk && window.Clerk.isReady) {
-                    clearInterval(checkSession);
-                    if (window.Clerk.user) {
-                        loadVendorOrders();
-                    } else {
-                        document.getElementById('vendor-orders-container').innerHTML = '<p>Redirecting to login...</p>';
-                        window.location.href = '/index.html?login=true';
-                    }
+                    clearInterval(checkAuth);
+                    
+                    window.Clerk.addListener(({ user }) => {
+                        if (authChecked) return;
+                        authChecked = true;
+                        
+                        if (user) {
+                            loadVendorOrders();
+                        } else {
+                            document.getElementById('vendor-orders-container').innerHTML = '<p>Session expired. Redirecting to login...</p>';
+                            setTimeout(() => {
+                                window.location.href = '/index.html?login=true';
+                            }, 1500);
+                        }
+                    });
+                    
+                    // Fallback
+                    setTimeout(() => {
+                        if (!authChecked) {
+                            authChecked = true;
+                            if (window.Clerk.user) {
+                                loadVendorOrders();
+                            } else {
+                                window.location.href = '/index.html?login=true';
+                            }
+                        }
+                    }, 500);
                 }
             }, 100);
         });

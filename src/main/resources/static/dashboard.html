@@ -107,20 +107,44 @@
         let pollInterval;
 
         document.addEventListener('DOMContentLoaded', () => {
-            const checkSession = setInterval(async () => {
+            let authChecked = false;
+            const checkAuth = setInterval(() => {
                 if (window.Clerk && window.Clerk.isReady) {
-                    clearInterval(checkSession);
-                    if (window.Clerk.user) {
-                        document.getElementById('profile-name').innerText = window.Clerk.user.fullName || 'Student';
-                        document.getElementById('profile-email').innerText = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
+                    clearInterval(checkAuth);
+                    
+                    window.Clerk.addListener(({ user }) => {
+                        if (authChecked) return;
+                        authChecked = true;
                         
-                        loadOrders();
-                        // Real-time polling every 10 seconds
-                        pollInterval = setInterval(loadOrders, 10000);
-                    } else {
-                        document.getElementById('orders-container').innerHTML = '<p>Redirecting to login...</p>';
-                        window.location.href = '/index.html?login=true';
-                    }
+                        if (user) {
+                            document.getElementById('profile-name').innerText = user.fullName || 'Student';
+                            document.getElementById('profile-email').innerText = user.primaryEmailAddress?.emailAddress || '';
+                            
+                            loadOrders();
+                            // Real-time polling every 10 seconds
+                            pollInterval = setInterval(loadOrders, 10000);
+                        } else {
+                            document.getElementById('orders-container').innerHTML = '<p>Session expired. Redirecting to login...</p>';
+                            setTimeout(() => {
+                                window.location.href = '/index.html?login=true';
+                            }, 1500);
+                        }
+                    });
+                    
+                    // Fallback
+                    setTimeout(() => {
+                        if (!authChecked) {
+                            authChecked = true;
+                            if (window.Clerk.user) {
+                                document.getElementById('profile-name').innerText = window.Clerk.user.fullName || 'Student';
+                                document.getElementById('profile-email').innerText = window.Clerk.user.primaryEmailAddress?.emailAddress || '';
+                                loadOrders();
+                                pollInterval = setInterval(loadOrders, 10000);
+                            } else {
+                                window.location.href = '/index.html?login=true';
+                            }
+                        }
+                    }, 500);
                 }
             }, 100);
         });
